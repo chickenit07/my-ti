@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Search Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: left;
+            overflow: hidden;
+            /* Hide content overflow */
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            resize: horizontal;
+            /* Enable horizontal resizing */
+            overflow: auto;
+            /* Enable overflow for resizing */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e6e6e6;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.5);
+        }
+
+        td {
+            word-break: break-all;
+        }
+
+        textarea {
+            width: 100%;
+            resize: vertical;
+            /* Enable vertical resizing */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Search Results</h1>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">ID</th>
+                <th style="width: 10%;">Timestamp</th>
+                <th style="width: 20%;">Domain</th>
+                <th style="width: 15%;">Username</th>
+                <th style="width: 15%;">Password</th>
+                <th style="width: 5%;">Select</th> <!-- Checkbox column -->
+                <th>Note</th> <!-- Note column with no fixed width -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for hit in hits %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ hit.t }}</td>
+                <td onclick="highlightCell(this);"><a onclick="window.open('http://{{ hit.d }}', '_blank');">{{ hit.d
+                        }}</a></td>
+                <td onclick="highlightCell(this);"><a onclick="copyToClipboard('{{ hit.u }}');">{{ hit.u }}</a></td>
+                <td onclick="highlightCell(this);""><a onclick=" copyToClipboard('{{ hit.p }}');">{{ hit.p }}</a></td>
+                <td><input type="checkbox" name="select_checkbox" value="{{ loop.index }}"></td>
+                <!-- Checkbox column -->
+                <td><textarea name="note" rows="1" cols="30"></textarea></td> <!-- Note column -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <script>
+        function copyToClipboard(value) {
+            var dummy = document.createElement("input");
+            document.body.appendChild(dummy);
+            dummy.setAttribute("id", "dummy_id");
+            document.getElementById("dummy_id").value = value;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+        }
+    
+        function highlightCell(cellElement) {
+            // Remove background color from all cells
+            var cells = document.getElementsByTagName("td");
+            for (var i = 0; i < cells.length; i++) {
+                cells[i].style.backgroundColor = "";
+            }
+    
+            // Change background color of the clicked cell
+            cellElement.style.backgroundColor = "#e6e6e6"; // Change to desired color
+    
+            // Copy cell value to clipboard
+            var cellValue = cellElement.textContent.trim();
+            copyToClipboard(cellValue);
+        }
+    
+        function sortSelectedRows() {
+            var table = document.querySelector('table');
+            var rows = Array.from(table.rows).slice(1); // Convert to array and remove header
+            var selectedRows = [];
+    
+            // Collect selected rows
+            rows.forEach(function (row) {
+                var checkbox = row.getElementsByTagName("input")[0];
+                if (checkbox.checked) {
+                    selectedRows.push(row);
+                }
+            });
+    
+            // Move selected rows to the top
+            selectedRows.forEach(function (selectedRow) {
+                table.insertBefore(selectedRow, table.firstChild);
+            });
+        }
+    
+        // Add event listeners to all checkboxes
+        var checkboxes = document.getElementsByName('select_checkbox');
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                sortSelectedRows();
+            });
+        });
+    </script>
+    
+</body>
+</html>

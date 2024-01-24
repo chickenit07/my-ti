@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Username and Password List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .columns {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .column {
+            width: 48%; /* Adjust the width of columns */
+            position: relative;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e6e6e6;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .column .copy-button {
+            top: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Username and Password List</h1>
+
+    <div class="columns">
+        <!-- Username column -->
+        <div class="column">
+            <button class="copy-button" onclick="copyColumn('username')">Copy All</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hit in hits %}
+                    <tr>
+                        <td>{{ hit.u }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Password column -->
+        <div class="column">
+            <button class="copy-button" onclick="copyColumn('password')">Copy All</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Password</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hit in hits %}
+                    <tr>
+                        <td>{{ hit.p }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(value) {
+            var dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = value;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+        }
+
+        function copyColumn(type) {
+            var columnContent = '';
+            var rows = document.querySelectorAll(`.column:nth-child(${type === 'username' ? 1 : 2}) tbody tr`);
+
+            rows.forEach(function(row) {
+                var cellContent = row.cells[0].textContent.trim();
+                if (cellContent !== '') {
+                    columnContent += cellContent + '\n';
+                }
+            });
+
+            if (columnContent !== '') {
+                copyToClipboard(columnContent);
+            }
+        }
+    </script>
+</body>
+</html>
