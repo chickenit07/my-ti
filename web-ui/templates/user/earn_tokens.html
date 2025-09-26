@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn Tokens</title>
+    <script>
+        // Load theme immediately before any CSS
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.body.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #dc3545;
+            --background-color: #0d1117;
+            --card-background: #161b22;
+            --border-color: #30363d;
+            --text-color: #f0f6fc;
+            --text-muted: #8b949e;
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --primary-color: #ffffff;
+            --secondary-color: #007bff;
+            --background-color: #f5f7fa;
+            --card-background: #ffffff;
+            --border-color: #e9ecef;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --primary-color: #1e293b;
+            --secondary-color: #0ea5e9;
+            --background-color: #0f1419;
+            --card-background: #1e293b;
+            --border-color: #334155;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-color) !important;
+            color: var(--text-color) !important;
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            background-color: var(--card-background) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-color) !important;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        }
+
+        .form-control {
+            background-color: var(--card-background) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-color) !important;
+        }
+
+        .form-control:focus {
+            background-color: var(--card-background) !important;
+            border-color: var(--secondary-color) !important;
+            color: var(--text-color) !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .form-label {
+            color: var(--text-color) !important;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .badge {
+            background-color: var(--secondary-color) !important;
+        }
+
+
+        /* Beautiful gradient buttons for light theme */
+        [data-theme="light"] .btn-success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+        }
+
+        [data-theme="light"] .btn-outline-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
+        }
+
+        /* Beautiful gradient buttons for dark theme */
+        [data-theme="dark"] .btn-success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
+        }
+
+        [data-theme="dark"] .btn-outline-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.5);
+        }
+
+        .toast { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+
+        /* Header styling to match other pages */
+        .tokens-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+
+        .tokens-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+        }
+
+        .tokens-header .user-info { display: flex; align-items: center; gap: 0.5rem; }
+        .tokens-header .user-badge { background: rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 15px; color: #ffffff; font-weight: 500; backdrop-filter: blur(10px); font-size: 0.9rem; }
+
+        /* Fixed theme switcher (bottom-right) */
+        .theme-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .theme-switcher .theme-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-switcher .theme-icon:hover { background: rgba(255,255,255,0.2); transform: scale(1.05); }
+        .theme-switcher .theme-icon.active { background: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.5); }
+
+        /* Toast styling for light theme */
+        [data-theme="light"] .toast {
+            background-color: #ffffff !important;
+            border: 1px solid #e9ecef !important;
+            color: #212529 !important;
+        }
+        [data-theme="light"] .toast-header {
+            background-color: #f8f9fa !important;
+            border-bottom: 1px solid #e9ecef !important;
+            color: #212529 !important;
+        }
+        [data-theme="light"] .toast-body {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+        }
+
+        /* Toast styling for dark theme */
+        [data-theme="dark"] .toast {
+            background-color: #1e293b !important;
+            border: 1px solid #334155 !important;
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .toast-header {
+            background-color: #0f172a !important;
+            border-bottom: 1px solid #334155 !important;
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .toast-body {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="container-fluid py-3">
+        <!-- Header -->
+        <div class="tokens-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <h3><i class="fas fa-coins me-2"></i>Earn Tokens</h3>
+                    <a href="{{ url_for('search') }}" class="btn btn-outline-secondary btn-sm ms-3"><i class="fas fa-arrow-left me-2"></i>Back to Search</a>
+                </div>
+                <div class="user-info">
+                    <div class="user-badge"><i class="fas fa-user me-1"></i>{{ username }}</div>
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm ms-2"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <p class="text-muted">Answer the security question below to earn 1 token.</p>
+                        <form id="earn-form" onsubmit="addTokens(event)">
+                            <div class="mb-3">
+                                <label for="security_answer" class="form-label">Who is the most handsome man in the world?</label>
+                                <input type="text" id="security_answer" name="security_answer" class="form-control" placeholder="Enter your answer" required>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Earn 1 Token
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="fas fa-check-circle me-2 text-success"></i>
+            <strong class="me-auto" id="toast-title">Success</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toast-body">Token updated.</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const toastEl = document.querySelector('.toast');
+        const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
+        function showToast(message, isSuccess = true) {
+            const title = document.getElementById('toast-title');
+            const body = document.getElementById('toast-body');
+            const icon = toastEl.querySelector('.toast-header i');
+            title.textContent = isSuccess ? 'Success' : 'Oops';
+            icon.className = isSuccess ? 'fas fa-check-circle me-2 text-success' : 'fas fa-exclamation-triangle me-2 text-danger';
+            body.textContent = message;
+            toast.show();
+        }
+        async function addTokens(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData();
+            formData.append('security_answer', form.security_answer.value);
+            try {
+                const res = await fetch('{{ url_for("add_tokens") }}', { method: 'POST', body: formData });
+                const result = await res.json();
+                if (result.success) {
+                    showToast(result.message, true);
+                    setTimeout(() => { window.location.href = '{{ url_for("search") }}'; }, 1200);
+                } else {
+                    showToast(result.message, false);
+                }
+            } catch (e) { console.error(e); showToast('An error occurred.', false); }
+        }
+
+        // Load saved theme immediately and on page load
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.body.setAttribute('data-theme', savedTheme);
+            console.log('Theme loaded immediately:', savedTheme);
+        })();
+
+        // Theme switching functionality
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            document.querySelectorAll('.theme-switcher .theme-icon').forEach(icon => { icon.classList.remove('active'); });
+            const activeIcon = document.querySelector(`.theme-switcher .theme-icon[data-theme="${theme}"]`);
+            if (activeIcon) { activeIcon.classList.add('active'); }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(savedTheme);
+            document.querySelectorAll('.theme-switcher .theme-icon').forEach(icon => {
+                icon.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const theme = this.getAttribute('data-theme');
+                    setTheme(theme);
+                });
+            });
+        });
+    </script>
+    <!-- Fixed Theme Switcher -->
+    <div class="theme-switcher">
+        <i class="fas fa-lightbulb theme-icon" data-theme="light" title="Light Theme"></i>
+        <i class="fas fa-moon theme-icon" data-theme="dark" title="Dark Theme"></i>
+    </div>
+</body>
+</html> 

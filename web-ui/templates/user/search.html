@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Intelligence Platform</title>
+    <script>
+        // Load theme immediately before any CSS
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.body.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Light Theme */
+        [data-theme="light"] {
+            --primary-color: #ffffff;
+            --secondary-color: #007bff;
+            --background-color: #f5f7fa;
+            --card-background: #ffffff;
+            --border-color: #e9ecef;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --primary-color: #1e293b;
+            --secondary-color: #0ea5e9;
+            --background-color: #0f1419;
+            --card-background: #1e293b;
+            --border-color: #334155;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-color) !important;
+            color: var(--text-color) !important;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Professional Light theme background */
+        [data-theme="light"] body {
+            background: #f5f7fa !important;
+            color: #212529 !important;
+        }
+
+        /* Professional Dark theme background */
+        [data-theme="dark"] body {
+            background: #0f1419 !important;
+            color: #f8fafc !important;
+        }
+
+        /* Override any white backgrounds */
+        html, body {
+            background-color: var(--background-color) !important;
+        }
+
+        [data-theme="light"] html,
+        [data-theme="light"] body {
+            background-color: #f5f7fa !important;
+        }
+
+        /* Force light theme colors on all elements */
+        [data-theme="light"] .search-form,
+        [data-theme="light"] .results-table,
+        [data-theme="light"] .table,
+        [data-theme="light"] .form-control,
+        [data-theme="light"] .form-select,
+        [data-theme="light"] .container,
+        [data-theme="light"] .search-toolbar,
+        [data-theme="light"] .user-badge,
+        [data-theme="light"] .token-info {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border-color: #e9ecef !important;
+        }
+
+        /* Specific container overrides for light theme */
+        [data-theme="light"] .container {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+        }
+
+        /* Professional gradient user badge for light theme */
+        [data-theme="light"] .user-badge {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Fix text-muted colors for better visibility */
+        [data-theme="light"] .text-muted {
+            color: #6c757d !important;
+        }
+
+        [data-theme="dark"] .text-muted {
+            color: #94a3b8 !important;
+        }
+
+        /* Comprehensive light theme overrides */
+        [data-theme="light"] * {
+            color: inherit;
+        }
+
+        [data-theme="light"] .search-form,
+        [data-theme="light"] .results-table,
+        [data-theme="light"] .card,
+        [data-theme="light"] .table-responsive,
+        [data-theme="light"] .form-control,
+        [data-theme="light"] .form-select,
+        [data-theme="light"] .btn,
+        [data-theme="light"] .dropdown-menu,
+        [data-theme="light"] .toast {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border-color: #e9ecef !important;
+        }
+
+        [data-theme="light"] .table thead th,
+        [data-theme="light"] .table tbody td {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border-color: #e9ecef !important;
+        }
+
+        [data-theme="light"] .form-label,
+        [data-theme="light"] .form-text,
+        [data-theme="light"] .text-muted {
+            color: #6c757d !important;
+        }
+
+        [data-theme="light"] .btn-outline-secondary {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="light"] .btn-danger {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: #ffffff !important;
+        }
+
+        /* Professional gradient buttons for light theme */
+        [data-theme="light"] .btn-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-danger {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        [data-theme="light"] .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+        }
+
+        [data-theme="light"] .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        [data-theme="light"] .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
+        }
+
+        /* Professional gradient outline buttons for light theme */
+        [data-theme="light"] .btn-outline-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-outline-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Force light theme on all remaining elements */
+        [data-theme="light"] .navbar,
+        [data-theme="light"] .nav,
+        [data-theme="light"] .dropdown,
+        [data-theme="light"] .modal,
+        [data-theme="light"] .modal-content,
+        [data-theme="light"] .modal-header,
+        [data-theme="light"] .modal-body,
+        [data-theme="light"] .modal-footer {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border-color: #e9ecef !important;
+        }
+
+        [data-theme="light"] .dropdown-item {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+        }
+
+        [data-theme="light"] .dropdown-item:hover {
+            background-color: #f8f9fa !important;
+            color: #212529 !important;
+        }
+
+        [data-theme="light"] .table thead th {
+            background-color: #f8f9fa !important;
+            color: #212529 !important;
+        }
+
+        [data-theme="light"] .table tbody td {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border-color: #e9ecef !important;
+        }
+
+        /* Copy function buttons theme colors */
+        [data-theme="light"] .btn-outline-primary {
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="light"] .btn-outline-primary:hover {
+            background-color: #0056b3 !important;
+            border-color: #0056b3 !important;
+        }
+
+        [data-theme="dark"] .btn-outline-primary {
+            background-color: #0ea5e9 !important;
+            border-color: #0ea5e9 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="dark"] .btn-outline-primary:hover {
+            background-color: #0284c7 !important;
+            border-color: #0284c7 !important;
+        }
+
+        /* Professional gradient buttons for dark theme */
+        [data-theme="dark"] .btn-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-danger {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-secondary {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(75, 85, 99, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+        }
+
+        [data-theme="dark"] .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
+        }
+
+        [data-theme="dark"] .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+        }
+
+        [data-theme="dark"] .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(75, 85, 99, 0.5);
+        }
+
+        /* Professional gradient outline buttons for dark theme */
+        [data-theme="dark"] .btn-outline-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-outline-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+        }
+
+        [data-theme="dark"] html,
+        [data-theme="dark"] body {
+            background-color: #0f1419 !important;
+        }
+
+        /* Force dark theme colors on all elements */
+        [data-theme="dark"] .search-form,
+        [data-theme="dark"] .results-table,
+        [data-theme="dark"] .table,
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select,
+        [data-theme="dark"] .container,
+        [data-theme="dark"] .search-toolbar,
+        [data-theme="dark"] .user-badge,
+        [data-theme="dark"] .token-info {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        /* Specific container overrides for dark theme */
+        [data-theme="dark"] .container {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .table thead th {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .table tbody td {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        .container {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 10px;
+            background-color: var(--background-color) !important;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .search-toolbar {
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            
+            .user-info {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .search-toolbar > div:last-child {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .theme-switcher {
+                gap: 2px;
+            }
+            
+            .theme-icon {
+                font-size: 0.9rem;
+                padding: 2px;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+            }
+            
+            .btn-sm {
+                font-size: 0.8rem;
+                padding: 0.25rem 0.5rem;
+            }
+        }
+
+        .header-section { display: none; }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-badge {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #b02a37 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .theme-switcher {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .theme-icon {
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            padding: 6px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-icon:hover {
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        .theme-icon.active {
+            color: #ffffff;
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-icon.active:hover {
+            color: #ffffff;
+            background: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        /* Light theme specific styling for better visibility */
+        [data-theme="light"] .theme-icon {
+            color: #495057;
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .theme-icon:hover {
+            color: #ffffff;
+            background: #6c757d;
+            border-color: #6c757d;
+            transform: scale(1.05);
+        }
+
+        [data-theme="light"] .theme-icon.active {
+            color: #ffffff;
+            background: #007bff;
+            border-color: #007bff;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Dark theme specific styling for better visibility */
+        [data-theme="dark"] .theme-icon {
+            color: #f8fafc;
+            background: #374151;
+            border: 1px solid #4b5563;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="dark"] .theme-icon:hover {
+            color: #ffffff;
+            background: #6b7280;
+            border-color: #6b7280;
+            transform: scale(1.05);
+        }
+
+        [data-theme="dark"] .theme-icon.active {
+            color: #ffffff;
+            background: #0ea5e9;
+            border-color: #0ea5e9;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.4);
+        }
+
+        /* Tooltip styling for better visibility */
+        .tooltip {
+            font-size: 0.875rem;
+        }
+
+        .tooltip .tooltip-inner {
+            background-color: #1f2937;
+            color: #ffffff;
+            border: 1px solid #374151;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tooltip.bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: #1f2937;
+        }
+
+        .tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+            border-bottom-color: #1f2937;
+        }
+
+        .tooltip.bs-tooltip-start .tooltip-arrow::before {
+            border-left-color: #1f2937;
+        }
+
+        .tooltip.bs-tooltip-end .tooltip-arrow::before {
+            border-right-color: #1f2937;
+        }
+
+        .token-info {
+            background: #28a745;
+            color: white;
+            padding: 4px 10px;  
+            border-radius: 16px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .search-form {
+            background-color: var(--card-background) !important;
+            border: 1px solid var(--border-color) !important;
+            padding: 16px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .results-table {
+            background-color: var(--card-background) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .search-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .form-check-input {
+            width: 1.2em;
+            height: 1.2em;
+            margin-top: 0.1em;
+        }
+
+        .form-control {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 5px;
+            padding: 8px 12px;
+        }
+
+        .form-control:focus {
+            background-color: var(--card-background);
+            border-color: var(--secondary-color);
+            color: var(--text-color);
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover { background-color: #b02a37; transform: translateY(-1px); }
+        .btn-success { background-color: #28a745; border: none; padding: 8px 16px; border-radius: 5px; transition: all 0.3s ease; }
+        .btn-success:hover { background-color: #218838; transform: translateY(-1px); }
+        .btn-danger { background-color: #dc3545; border: none; padding: 6px 10px; border-radius: 5px; }
+
+        .results-table { 
+            background-color: var(--card-background) !important; 
+            border: 1px solid var(--border-color) !important;
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+            overflow: hidden; 
+        }
+
+        [data-theme="dark"] .results-table {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .table { margin-bottom: 0; color: var(--text-color); font-size: 0.875rem; }
+        .table thead th { 
+            background-color: var(--primary-color); 
+            color: white; 
+            border: none; 
+            padding: 8px 12px; 
+            font-weight: 500; 
+            font-size: 0.8rem;
+        }
+        .table tbody td { 
+            padding: 6px 12px; 
+            vertical-align: middle; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        .table tbody tr:hover { background-color: rgba(220, 53, 69, 0.1); }
+
+        .copyable-box { 
+            border: 1px solid var(--border-color); 
+            border-radius: 5px; 
+            padding: 4px 8px; 
+            transition: all 0.2s ease; 
+            background-color: var(--card-background); 
+            color: var(--text-color);
+        }
+        .copyable-box.highlight { 
+            background-color: rgba(220, 53, 69, 0.2); 
+            border-color: var(--secondary-color); 
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.3); 
+        }
+        .copy-btn { 
+            background: none; 
+            border: none; 
+            color: var(--secondary-color); 
+            cursor: pointer; 
+            padding: 5px; 
+            transition: all 0.2s ease; 
+            opacity: 0.6; 
+        }
+        .copyable-box:hover .copy-btn { opacity: 1; }
+        .copy-btn:hover { color: #b02a37; transform: scale(1.1); }
+
+        .note-textarea { 
+            width: 100%; 
+            min-width: 100px; 
+            max-width: 100%; 
+            border: 1px solid var(--border-color); 
+            border-radius: 5px; 
+            padding: 8px; 
+            resize: vertical; 
+            box-sizing: border-box; 
+            background-color: var(--card-background);
+            color: var(--text-color);
+        }
+        .note-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .toast { 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            z-index: 1000; 
+        }
+
+        /* Toast styling for light theme */
+        [data-theme="light"] .toast {
+            background-color: #ffffff !important;
+            border: 1px solid #e9ecef !important;
+            color: #212529 !important;
+        }
+
+        [data-theme="light"] .toast-header {
+            background-color: #f8f9fa !important;
+            border-bottom: 1px solid #e9ecef !important;
+            color: #212529 !important;
+        }
+
+        [data-theme="light"] .toast-body {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+        }
+
+        /* Toast styling for dark theme */
+        [data-theme="dark"] .toast {
+            background-color: #1e293b !important;
+            border: 1px solid #334155 !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .toast-header {
+            background-color: #0f172a !important;
+            border-bottom: 1px solid #334155 !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .toast-body {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+        .domain-link { color: var(--secondary-color); text-decoration: none; font-weight: 500; }
+        .domain-link:hover { text-decoration: underline; }
+
+        .security-question-form { display: flex; gap: 10px; align-items: end; }
+        .security-question-form .form-group { flex: 1; margin: 0; }
+        /* Professional header styling */
+        .search-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .search-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+        }
+
+        /* Consistent space between title and action buttons */
+        .header-title { margin-right: 0.75rem; }
+
+        .search-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-header .user-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            color: #ffffff;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+        }
+
+        /* Standardized button sizing */
+        .search-header .btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-header .btn i {
+            font-size: 0.9rem;
+            margin-right: 0.4rem;
+        }
+
+        .search-header .token-info {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: #ffffff;
+            backdrop-filter: blur(10px);
+        }
+
+        .token-plus {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            color: #ffffff;
+            background: rgba(255,255,255,0.15);
+            text-decoration: none;
+        }
+        .token-plus:hover { background: rgba(255,255,255,0.25); }
+
+        /* Theme switcher positioning */
+        .theme-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .theme-switcher .theme-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-switcher .theme-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .theme-switcher .theme-icon.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Light theme specific overrides */
+        [data-theme="light"] .search-header {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
+        }
+
+        [data-theme="light"] .search-header h3 {
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="container">
+        <!-- Professional Header -->
+        <div class="search-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <h3 class="header-title"><i class="fas fa-search me-2"></i>Credential Search</h3>
+                    {% if user_role == 'guest' %}{% endif %}
+                    {% if user_role == 'admin' %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-sm me-2">
+                        <i class="fas fa-tools me-2"></i>Admin
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('saved_page') }}" class="btn btn-outline-secondary btn-sm me-2">
+                        <i class="fas fa-bookmark me-2"></i>My Saved Items
+                    </a>
+                </div>
+                <div class="user-info">
+                    {% if user_role == 'guest' %}
+                    <div class="token-info me-2" title="Earn tokens" id="tokenInfo">
+                        <i class="fas fa-coins me-2"></i>
+                        <span class="token-count">{{ tokens }} tokens</span>
+                        <a href="{{ url_for('tokens_page') }}" class="token-plus ms-2" title="Earn tokens">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                    <div class="user-badge">
+                        <i class="fas fa-user me-1"></i>{{ username }} ({{ user_role.title() }})
+                    </div>
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm ms-2">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Form -->
+        <form method="POST" action="{{ url_for('search') }}" class="search-form">
+
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="domain" class="form-label">Domain</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                        <input type="text" name="domain" id="domain" class="form-control" value="{{ request.form.get('domain', '') }}" placeholder="Enter domain">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" name="username" id="username" class="form-control" value="{{ request.form.get('username', '') }}" placeholder="Enter username">
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <label for="line" class="form-label">Results</label>
+                    <input type="number" name="line" id="line" class="form-control" value="{{ request.form.get('line', '50') }}" min="1" max="10000" placeholder="Max 10,000">
+                </div>
+
+                <div class="col-md-1">
+                    <label for="type" class="form-label">Search Type</label>
+                    <select name="type" id="type" class="form-select">
+                        <option value="" {% if request.form.get('type', '') == '' %}selected{% endif %}>Any</option>
+                        <option value="exact" {% if request.form.get('type', '') == 'exact' %}selected{% endif %}>Exact</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 text-end">
+                    <button type="submit" class="btn btn-primary" {% if user_role == 'guest' and tokens <= 0 %}disabled{% endif %}>
+                        <i class="fas fa-search me-2"></i>Search
+                        {% if user_role == 'guest' %}{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Flash Messages converted to toast notifications -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        {% for category, message in messages %}
+                        showToastMessage('{{ message|e }}', {% if category == 'error' %}false{% else %}true{% endif %});
+                        {% endfor %}
+                    });
+                </script>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Results Table -->
+        <div class="results-table">
+            <div class="table-responsive">
+                <div class="d-flex justify-content-end gap-2 mb-3">
+                    <button class="btn btn-outline-primary" onclick="copyAllDomains()" type="button">
+                        <i class="fas fa-globe me-2"></i>Copy All Domains
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="copyAllUsernames()" type="button">
+                        <i class="fas fa-users me-2"></i>Copy All Usernames
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="copyAllPasswords()" type="button">
+                        <i class="fas fa-key me-2"></i>Copy All Passwords
+                    </button>
+                    <button class="btn btn-success" onclick="saveSelected()" type="button">
+                        <i class="fas fa-bookmark me-2"></i>Save Item
+                    </button>
+                </div>
+                <table class="table">
+                    <colgroup>
+                        <col style="width: 3%">
+                        <col style="width: 8%">
+                        <col style="width: 15%">
+                        <col style="width: 20%">
+                        <col style="width: 20%">
+                        <col style="width: 2%">
+                        <col style="width: 32%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th style="width: 3%">#</th>
+                            <th style="width: 8%">Timestamp</th>
+                            <th style="width: 15%">Domain</th>
+                            <th style="width: 20%">Username</th>
+                            <th style="width: 20%">Password</th>
+                            <th style="width: 2%">Select</th>
+                            <th style="width: 32%">Note</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                        {% if hits %}
+                            {% for hit in hits %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ hit.t }}</td>
+                                <td>
+                                    <a href="http://{{ hit.d }}" target="_blank" class="domain-link">
+                                        {{ hit.d }}
+                                    </a>
+                                </td>
+                                <td>   
+                                    <div class="d-flex align-items-center copyable-box">
+                                        <span class="me-2 flex-grow-1">{{ hit.u }}</span>
+                                        <button class="copy-btn" title="Copy username" onclick="event.stopPropagation(); copyToClipboard(this.previousElementSibling.textContent.trim(), this.previousElementSibling);">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center copyable-box">
+                                        <span class="me-2 flex-grow-1">{{ hit.p }}</span>
+                                        <button class="copy-btn" title="Copy password" onclick="event.stopPropagation(); copyToClipboard(this.previousElementSibling.textContent.trim(), this.previousElementSibling);">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="select_checkbox" value="{{ loop.index }}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <textarea class="note-textarea" name="note" rows="1" placeholder="Add a note..." oninput="autoSelectCheckbox(this)"></textarea>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="fas fa-search fa-2x mb-3"></i>
+                                        <p>Enter search criteria above to view credentials</p>
+                                        {% if user_role == 'guest' and tokens <= 0 %}
+                                            <p><strong>You need tokens to search. Click Earn Token to get more.</strong></p>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Saved searches moved to dedicated pages (/saved, /saved/<id>) -->
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="fas fa-check-circle me-2 text-success"></i>
+            <strong class="me-auto" id="toast-title">Notice</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toast-body">
+            Copied to clipboard!
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize toast
+        const toastEl = document.querySelector('.toast');
+        const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
+        function showToastMessage(message, isSuccess = true) {
+            const title = document.getElementById('toast-title');
+            const body = document.getElementById('toast-body');
+            const icon = toastEl.querySelector('.toast-header i');
+            title.textContent = isSuccess ? 'Success' : 'Oops';
+            icon.className = isSuccess ? 'fas fa-check-circle me-2 text-success' : 'fas fa-exclamation-triangle me-2 text-danger';
+            body.textContent = message;
+            toast.show();
+        }
+        function showToast() { showToastMessage('Copied to clipboard!', true); }
+        async function addTokens(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData();
+            formData.append('security_answer', form.security_answer.value);
+            try {
+                const response = await fetch('{{ url_for("add_tokens") }}', { method: 'POST', body: formData });
+                const result = await response.json();
+                if (result.success) {
+                    document.querySelector('.token-info').innerHTML = `<i class=\"fas fa-coins me-2\"></i>${result.tokens} tokens`;
+                    form.reset();
+                    const searchBtn = document.querySelector('button[type=\"submit\"]');
+                    if (searchBtn.disabled) searchBtn.disabled = false;
+                    showToastMessage(result.message, true);
+                } else {
+                    showToastMessage(result.message, false);
+                }
+            } catch (error) { console.error('Error adding tokens:', error); showToastMessage('An error occurred while adding tokens.', false); }
+        }
+        function copyToClipboard(value, element) {
+            document.querySelectorAll('.copyable-box.highlight').forEach(box => { box.classList.remove('highlight'); });
+            var dummy = document.createElement("textarea"); document.body.appendChild(dummy); dummy.value = value; dummy.select(); document.execCommand("copy"); document.body.removeChild(dummy); showToast && showToast(); if (element) { element.classList.add('highlight'); }
+        }
+        function copyAllDomains() { document.querySelectorAll('.copyable-box.highlight').forEach(box => { box.classList.remove('highlight'); }); const rows = document.querySelectorAll('tbody tr'); const domains = []; rows.forEach(row => { const domainCell = row.querySelector('td:nth-child(3) .domain-link'); if (domainCell) { const domain = domainCell.textContent.trim(); domains.push(domain); const copyableBox = domainCell.closest('td'); if (copyableBox) { copyableBox.classList.add('highlight'); } } }); copyToClipboard(domains.join('\r\n')); }
+        function copyAllUsernames() { document.querySelectorAll('.copyable-box.highlight').forEach(box => { box.classList.remove('highlight'); }); const rows = document.querySelectorAll('tbody tr'); const usernames = []; rows.forEach(row => { const usernameCell = row.querySelector('td:nth-child(4) .flex-grow-1'); if (usernameCell) { const username = usernameCell.textContent.trim(); usernames.push(username); const copyableBox = usernameCell.closest('.copyable-box'); if (copyableBox) { copyableBox.classList.add('highlight'); } } }); copyToClipboard(usernames.join('\r\n')); }
+        function copyAllPasswords() { document.querySelectorAll('.copyable-box.highlight').forEach(box => { box.classList.remove('highlight'); }); const rows = document.querySelectorAll('tbody tr'); const passwords = []; rows.forEach(row => { const passwordCell = row.querySelector('td:nth-child(5) .flex-grow-1'); if (passwordCell) { const password = passwordCell.textContent.trim(); passwords.push(password); const copyableBox = passwordCell.closest('.copyable-box'); if (copyableBox) { copyableBox.classList.add('highlight'); } } }); copyToClipboard(passwords.join('\r\n')); }
+        // Theme switching functionality
+        function setTheme(theme) {
+            // Set theme on both html and body elements to ensure compatibility
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            console.log('Theme changed to:', theme);
+            console.log('HTML data-theme:', document.documentElement.getAttribute('data-theme'));
+            console.log('Body data-theme:', document.body.getAttribute('data-theme'));
+            
+            // Update active state
+            document.querySelectorAll('.theme-switcher .theme-icon').forEach(icon => {
+                icon.classList.remove('active');
+            });
+            
+            // Find and activate the correct icon
+            const activeIcon = document.querySelector(`.theme-switcher .theme-icon[data-theme="${theme}"]`);
+            if (activeIcon) {
+                activeIcon.classList.add('active');
+            }
+        }
+
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) { return new bootstrap.Tooltip(tooltipTriggerEl) });
+        document.querySelectorAll('input[name="select_checkbox"]').forEach(checkbox => { checkbox.addEventListener('change', function() { const row = this.closest('tr'); row.style.backgroundColor = this.checked ? 'rgba(52, 152, 219, 0.1)' : ''; }); });
+        document.querySelectorAll('.note-textarea').forEach(textarea => { textarea.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; }); });
+        
+        // Auto-select checkbox when textarea is edited
+        function autoSelectCheckbox(textarea) {
+            const row = textarea.closest('tr');
+            const checkbox = row.querySelector('input[name="select_checkbox"]');
+            if (checkbox && !checkbox.checked) {
+                checkbox.checked = true;
+                // Trigger the change event to update row highlighting
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // Load theme immediately to prevent flash
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.body.setAttribute('data-theme', savedTheme);
+            console.log('Theme loaded immediately:', savedTheme);
+        })();
+
+        // Consolidated DOMContentLoaded listener
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing all systems');
+            
+            // Initialize theme system
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(savedTheme);
+            
+            // Add click event listeners to theme icons
+            document.querySelectorAll('.theme-switcher .theme-icon').forEach(icon => {
+                icon.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const theme = this.getAttribute('data-theme');
+                    setTheme(theme);
+                });
+            });
+            
+            // Initialize copy buttons
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const textElement = this.previousElementSibling;
+                    const textToCopy = textElement.textContent.trim();
+                    const copyableBox = this.closest('.copyable-box');
+                    copyToClipboard(textToCopy, copyableBox);
+                });
+            });
+        });
+
+        async function saveSelected() {
+            try {
+                const rows = Array.from(document.querySelectorAll('tbody tr'));
+                const items = [];
+                rows.forEach((row) => {
+                    const checkbox = row.querySelector('input[name="select_checkbox"]');
+                    if (!checkbox || !checkbox.checked) return;
+                    const t = row.querySelector('td:nth-child(2)')?.textContent.trim();
+                    const d = row.querySelector('td:nth-child(3) .domain-link')?.textContent.trim();
+                    const u = row.querySelector('td:nth-child(4) .flex-grow-1')?.textContent.trim();
+                    const p = row.querySelector('td:nth-child(5) .flex-grow-1')?.textContent.trim();
+                    const note = row.querySelector('textarea[name="note"]')?.value.trim() || '';
+                    if (d && u && p) {
+                        items.push({ t, d, u, p, note });
+                    }
+                });
+                if (items.length === 0) {
+                    showToastMessage('No selected rows to save.', false);
+                    return;
+                }
+                const name = prompt('Enter a name for this saved search:');
+                if (!name) { return; }
+                const res = await fetch('{{ url_for("save_results_endpoint") }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, items })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToastMessage(`Saved ${result.count} item(s) to \"${name}\".`, true);
+                } else {
+                    showToastMessage(result.message || 'Failed to save.', false);
+                }
+            } catch (e) {
+                console.error('Failed to save', e);
+                showToastMessage('Error saving items.', false);
+            }
+        }
+    </script>
+
+    <!-- Fixed Theme Switcher -->
+    <div class="theme-switcher">
+        <i class="fas fa-lightbulb theme-icon" data-theme="light" title="Light Theme"></i>
+        <i class="fas fa-moon theme-icon" data-theme="dark" title="Dark Theme"></i>
+    </div>
+</body>
+</html>

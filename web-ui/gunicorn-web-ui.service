@@ -1,0 +1,21 @@
+[Unit]
+Description=Gunicorn service for my-ti web-ui
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/mnt/data/my-ti/web-ui
+# Uncomment and set a non-root user if desired:
+# User=www-data
+# Group=www-data
+# Environment settings (optional)
+# Environment=FLASK_ENV=production
+# Prefer running gunicorn directly from the venv rather than activating a shell
+ExecStart=/mnt/data/my-ti/web-ui/.venv/bin/gunicorn -b 0.0.0.0:8000 wsgi:application --workers 3
+Restart=always
+RestartSec=3
+# Increase if startup takes longer
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target 

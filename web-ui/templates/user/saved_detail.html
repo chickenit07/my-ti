@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved: {{ search_name }} - Threat Intelligence Platform</title>
+    <script>
+        // Load theme immediately before any CSS
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.body.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #dc3545;
+            --background-color: #0d1117;
+            --card-background: #161b22;
+            --border-color: #30363d;
+            --text-color: #f0f6fc;
+            --text-muted: #8b949e;
+        }
+
+        /* Light Theme */
+        [data-theme="light"] {
+            --primary-color: #ffffff;
+            --secondary-color: #007bff;
+            --background-color: #f5f7fa;
+            --card-background: #ffffff;
+            --border-color: #e9ecef;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --primary-color: #1e293b;
+            --secondary-color: #0ea5e9;
+            --background-color: #0f1419;
+            --card-background: #1e293b;
+            --border-color: #334155;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--background-color) 0%, var(--primary-color) 100%);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        /* Professional Light theme background */
+        [data-theme="light"] body {
+            background: #f5f7fa !important;
+            color: #212529 !important;
+        }
+
+        /* Professional Dark theme background */
+        [data-theme="dark"] body {
+            background: #0f1419 !important;
+            color: #f8fafc !important;
+        }
+
+        /* Force light theme colors on all elements */
+        [data-theme="light"] .results-table,
+        [data-theme="light"] .table,
+        [data-theme="light"] .container {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border-color: #e9ecef !important;
+        }
+
+        [data-theme="light"] .table thead th {
+            background-color: #f8f9fa !important;
+            color: #212529 !important;
+        }
+
+        [data-theme="light"] .table tbody td {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            border-color: #e9ecef !important;
+        }
+
+        /* Force dark theme colors on all elements */
+        [data-theme="dark"] .results-table,
+        [data-theme="dark"] .table,
+        [data-theme="dark"] .container {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        [data-theme="dark"] .table thead th {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .table tbody td {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        .results-table { 
+            background-color: var(--card-background); 
+            border: 1px solid var(--border-color);
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3); 
+            overflow: hidden; 
+        }
+        .table { margin-bottom: 0; color: var(--text-color); font-size: 0.875rem; }
+        .table thead th { 
+            background-color: var(--primary-color); 
+            color: white; 
+            border: none; 
+            padding: 8px 12px; 
+            font-weight: 500; 
+            font-size: 0.8rem;
+        }
+        .table tbody td { 
+            padding: 6px 12px; 
+            vertical-align: middle; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        .table tbody tr:hover { background-color: rgba(220, 53, 69, 0.1); }
+        .copyable-box { 
+            border: 1px solid var(--border-color); 
+            border-radius: 5px; 
+            padding: 4px 8px; 
+            background-color: var(--card-background); 
+            color: var(--text-color);
+        }
+        .copyable-box.highlight { 
+            background-color: rgba(220, 53, 69, 0.2); 
+            border-color: var(--secondary-color); 
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.3); 
+        }
+        .copy-btn { 
+            background: none; 
+            border: none; 
+            color: var(--secondary-color); 
+            cursor: pointer; 
+            padding: 5px; 
+            opacity: 0.7; 
+        }
+        .copy-btn:hover { 
+            color: #b02a37; 
+            opacity: 1; 
+        }
+
+
+
+        .toast { 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            z-index: 1000; 
+        }
+
+        /* Toast styling for light theme */
+        [data-theme="light"] .toast {
+            background-color: #ffffff !important;
+            border: 1px solid #e9ecef !important;
+            color: #212529 !important;
+        }
+
+        [data-theme="light"] .toast-header {
+            background-color: #f8f9fa !important;
+            border-bottom: 1px solid #e9ecef !important;
+            color: #212529 !important;
+        }
+
+        [data-theme="light"] .toast-body {
+            background-color: #ffffff !important;
+            color: #212529 !important;
+        }
+
+        /* Toast styling for dark theme */
+        [data-theme="dark"] .toast {
+            background-color: #1e293b !important;
+            border: 1px solid #334155 !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .toast-header {
+            background-color: #0f172a !important;
+            border-bottom: 1px solid #334155 !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .toast-body {
+            background-color: #1e293b !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Beautiful gradient buttons for light theme */
+        [data-theme="light"] .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-secondary {
+            background: linear-gradient(135deg, #a8a8a8 0%, #6c757d 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(168, 168, 168, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-primary:hover,
+        [data-theme="light"] .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Beautiful gradient buttons for dark theme */
+        [data-theme="dark"] .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-secondary {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(74, 85, 104, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-primary:hover,
+        [data-theme="dark"] .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Professional gradient outline buttons for light theme */
+        [data-theme="light"] .btn-outline-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .btn-outline-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Professional gradient outline buttons for dark theme */
+        [data-theme="dark"] .btn-outline-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .btn-outline-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+        }
+
+        /* Note textarea styling */
+        .note-textarea {
+            resize: vertical;
+            min-height: 32px;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+        }
+
+        [data-theme="light"] .note-textarea {
+            background-color: #ffffff !important;
+            border-color: #dee2e6 !important;
+            color: #495057 !important;
+        }
+
+        [data-theme="light"] .note-textarea:focus {
+            border-color: #007bff !important;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+        }
+
+        [data-theme="dark"] .note-textarea {
+            background-color: #374151 !important;
+            border-color: #4b5563 !important;
+            color: #f8fafc !important;
+        }
+
+        [data-theme="dark"] .note-textarea:focus {
+            border-color: #0ea5e9 !important;
+            box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.25) !important;
+        }
+
+        /* Placeholder text styling for better visibility */
+        [data-theme="light"] .note-textarea::placeholder {
+            color: #6c757d !important;
+            opacity: 1;
+        }
+
+        [data-theme="dark"] .note-textarea::placeholder {
+            color: #9ca3af !important;
+            opacity: 1;
+        }
+
+        /* Disabled button styling */
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Professional header styling */
+        .saved-detail-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .saved-detail-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 1.2;
+        }
+        .header-title { margin-right: 0.75rem; }
+
+        .saved-detail-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .saved-detail-header .user-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            color: #ffffff;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+        }
+
+        /* Standardized button sizing */
+        .saved-detail-header .btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .saved-detail-header .btn i {
+            font-size: 0.9rem;
+            margin-right: 0.4rem;
+        }
+
+        /* Theme switcher positioning */
+        .theme-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .theme-switcher .theme-icon {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            text-align: center;
+            line-height: 36px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-switcher .theme-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .theme-switcher .theme-icon.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Light theme specific overrides */
+        [data-theme="light"] .saved-detail-header {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
+        }
+
+        [data-theme="light"] .saved-detail-header h3 {
+            color: #ffffff !important;
+        }
+    </style>
+    </head>
+<body class="p-3" data-theme="dark">
+    <div class="container-fluid">
+        <!-- Professional Header -->
+        <div class="saved-detail-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <h3 class="header-title"><i class="fas fa-bookmark me-2"></i>Saved Item: <span class="text-primary">{{ search_name }}</span></h3>
+                {% if is_admin %}
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-sm ms-3"><i class="fas fa-list me-2"></i>Admin Dashboard</a>
+                {% else %}
+                <a href="{{ url_for('saved_page') }}" class="btn btn-secondary btn-sm ms-3"><i class="fas fa-arrow-left me-2"></i>Back To All Saved Items</a>
+                {% endif %}
+                </div>
+                <div class="user-info">
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-table">
+            <div class="table-responsive">
+                <div class="d-flex justify-content-between align-items-center mb-3 px-2 pt-2">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-success" onclick="saveSelectedNotes()" type="button"><i class="fas fa-save me-2"></i>Save Selected</button>
+                        <button class="btn btn-danger" onclick="removeSelectedItems()" type="button"><i class="fas fa-trash me-2"></i>Remove Selected</button>
+                    </div>
+                    <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="copyAllDomains()" type="button"><i class="fas fa-globe me-2"></i>Copy All Domains</button>
+                    <button class="btn btn-outline-primary" onclick="copyAllUsernames()" type="button"><i class="fas fa-users me-2"></i>Copy All Usernames</button>
+                    <button class="btn btn-outline-primary" onclick="copyAllPasswords()" type="button"><i class="fas fa-key me-2"></i>Copy All Passwords</button>
+                    </div>
+                </div>
+                <table class="table">
+                    <colgroup>
+                        <col style="width: 3%">
+                        <col style="width: 8%">
+                        <col style="width: 15%">
+                        <col style="width: 18%">
+                        <col style="width: 18%">
+                        <col style="width: 2%">
+                        <col style="width: 36%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Timestamp</th>
+                            <th>Domain</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Select</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if items %}
+                            {% for r in items %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ r.t or r.created_at }}</td>
+                                <td><a href="http://{{ r.d }}" target="_blank" class="domain-link">{{ r.d }}</a></td>
+                                <td>
+                                    <div class="d-flex align-items-center copyable-box">
+                                        <span class="me-2 flex-grow-1">{{ r.u }}</span>
+                                        <button class="copy-btn" title="Copy username" onclick="event.stopPropagation(); copyToClipboard(this.previousElementSibling.textContent.trim(), this.previousElementSibling);"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center copyable-box">
+                                        <span class="me-2 flex-grow-1">{{ r.p }}</span>
+                                        <button class="copy-btn" title="Copy password" onclick="event.stopPropagation(); copyToClipboard(this.previousElementSibling.textContent.trim(), this.previousElementSibling);"><i class="fas fa-copy"></i></button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input item-checkbox" value="{{ r.id }}" onchange="updateSelectionCount()">
+                                    </div>
+                                </td>
+                                <td>
+                                    <textarea class="form-control note-textarea" data-item-id="{{ r.id }}" rows="2" placeholder="Enter note..." oninput="autoSelectCheckbox(this)">{{ r.note }}</textarea>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-3">No items in this saved search.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        <div class="toast-header">
+            <i class="fas fa-check-circle me-2 text-success"></i>
+            <strong class="me-auto" id="toast-title">Notice</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toast-body">Copied to clipboard!        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const toastEl = document.querySelector('.toast');
+        const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
+        function showToastMessage(message, isSuccess = true) {
+            const title = document.getElementById('toast-title');
+            const body = document.getElementById('toast-body');
+            const icon = toastEl.querySelector('.toast-header i');
+            title.textContent = isSuccess ? 'Success' : 'Oops';
+            icon.className = isSuccess ? 'fas fa-check-circle me-2 text-success' : 'fas fa-exclamation-triangle me-2 text-danger';
+            body.textContent = message; toast.show();
+        }
+        function copyToClipboard(value, element) {
+            document.querySelectorAll('.copyable-box.highlight').forEach(box => { box.classList.remove('highlight'); });
+            var dummy = document.createElement('textarea'); document.body.appendChild(dummy); dummy.value = value; dummy.select(); document.execCommand('copy'); document.body.removeChild(dummy); showToastMessage('Copied to clipboard!', true); if (element) { element.classList.add('highlight'); }
+        }
+        function collect(selector) {
+            const rows = document.querySelectorAll('tbody tr'); const values = [];
+            rows.forEach(row => { const el = row.querySelector(selector); if (el) { values.push(el.textContent.trim()); }});
+            return values.join('\r\n');
+        }
+        function copyAllDomains() { copyToClipboard(collect('td:nth-child(3)')); }
+        function copyAllUsernames() { copyToClipboard(collect('td:nth-child(4) .flex-grow-1')); }
+        function copyAllPasswords() { copyToClipboard(collect('td:nth-child(5) .flex-grow-1')); }
+
+        // Load saved theme immediately and on page load
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.body.setAttribute('data-theme', savedTheme);
+            console.log('Theme loaded immediately:', savedTheme);
+        })();
+
+        // Theme switching functionality
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            // Update active state
+            document.querySelectorAll('.theme-switcher .theme-icon').forEach(icon => {
+                icon.classList.remove('active');
+            });
+            
+            // Find and activate the correct icon
+            const activeIcon = document.querySelector(`.theme-switcher .theme-icon[data-theme="${theme}"]`);
+            if (activeIcon) {
+                activeIcon.classList.add('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            setTheme(savedTheme);
+            
+            // Add click event listeners to theme icons
+            document.querySelectorAll('.theme-switcher .theme-icon').forEach(icon => {
+                icon.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const theme = this.getAttribute('data-theme');
+                    setTheme(theme);
+                });
+            });
+            
+            // Initialize button states
+            updateSelectionCount();
+        });
+
+        // Auto-select checkbox when textarea is edited
+        function autoSelectCheckbox(textarea) {
+            const row = textarea.closest('tr');
+            const checkbox = row.querySelector('.item-checkbox');
+            if (checkbox && !checkbox.checked) {
+                checkbox.checked = true;
+                updateSelectionCount();
+            }
+        }
+
+        // Bulk operations functions
+        function updateSelectionCount() {
+            const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+            const saveBtn = document.querySelector('button[onclick="saveSelectedNotes()"]');
+            const removeBtn = document.querySelector('button[onclick="removeSelectedItems()"]');
+            
+            if (selectedCheckboxes.length > 0) {
+                saveBtn.disabled = false;
+                removeBtn.disabled = false;
+                saveBtn.innerHTML = `<i class="fas fa-save me-2"></i>Save Selected (${selectedCheckboxes.length})`;
+                removeBtn.innerHTML = `<i class="fas fa-trash me-2"></i>Remove Selected (${selectedCheckboxes.length})`;
+            } else {
+                saveBtn.disabled = true;
+                removeBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>Save Selected';
+                removeBtn.innerHTML = '<i class="fas fa-trash me-2"></i>Remove Selected';
+            }
+        }
+
+        function saveSelectedNotes() {
+            const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                showToastMessage('Please select items to save', false);
+                return;
+            }
+
+            const updates = [];
+            selectedCheckboxes.forEach(checkbox => {
+                const itemId = checkbox.value;
+                const textarea = document.querySelector(`textarea[data-item-id="${itemId}"]`);
+                if (textarea) {
+                    updates.push({
+                        item_id: itemId,
+                        note: textarea.value
+                    });
+                }
+            });
+
+            if (updates.length === 0) {
+                showToastMessage('No notes to save', false);
+                return;
+            }
+
+            // Send bulk update request
+            fetch('{{ url_for("saved_detail_page", saved_search_id=saved_search_id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=bulk_edit&updates=${encodeURIComponent(JSON.stringify(updates))}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToastMessage(`Successfully saved ${data.saved_count} notes!`, true);
+                    // Uncheck all selected items
+                    selectedCheckboxes.forEach(checkbox => checkbox.checked = false);
+                    updateSelectionCount();
+                } else {
+                    showToastMessage('Failed to save notes: ' + data.error, false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToastMessage('Failed to save notes', false);
+            });
+        }
+
+        function removeSelectedItems() {
+            const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                showToastMessage('Please select items to remove', false);
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to remove ${selectedCheckboxes.length} selected item(s)? This action cannot be undone.`)) {
+                return;
+            }
+
+            const itemIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+
+            fetch('{{ url_for("saved_detail_page", saved_search_id=saved_search_id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=bulk_delete&item_ids=${encodeURIComponent(JSON.stringify(itemIds))}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the rows from the table
+                    selectedCheckboxes.forEach(checkbox => {
+                        const row = checkbox.closest('tr');
+                        row.remove();
+                    });
+                    
+                    // Check if table is now empty
+                    const remainingRows = document.querySelectorAll('tbody tr');
+                    if (remainingRows.length === 0) {
+                        const tbody = document.querySelector('tbody');
+                        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3">No items in this saved search.</td></tr>';
+                    }
+                    
+                    showToastMessage(`Successfully removed ${data.removed_count} item(s)!`, true);
+                    updateSelectionCount();
+                } else {
+                    showToastMessage('Failed to remove items: ' + data.error, false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToastMessage('Failed to remove items', false);
+            });
+        }
+    </script>
+
+    <!-- Fixed Theme Switcher -->
+    <div class="theme-switcher">
+        <i class="fas fa-lightbulb theme-icon" data-theme="light" title="Light Theme"></i>
+        <i class="fas fa-moon theme-icon" data-theme="dark" title="Dark Theme"></i>
+    </div>
+</body>
+</html>
+
+

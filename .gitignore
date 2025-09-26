@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+
+# Local DB and artifacts
+users.db
+*.sqlite*
+*.log
+
+# Elastic data (do not commit)
+esdata/
+
+# Archives/legacy (kept locally only)
+Old_Archive/
+
+# Local temp/work dirs
+.push_tmp/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Node (if any future tooling)
+node_modules/
