@@ -92,8 +92,8 @@ def init_db():
     
     # Create default users if they don't exist. 
     # Con lon nao tim dc password nay tren github thi dung admin cho nhanh =)) khong thi thoi!!!
-    admin_hash = hashlib.sha256('Dat1999@'.encode()).hexdigest()
-    guest_hash = hashlib.sha256('Datdepzai'.encode()).hexdigest()
+    admin_hash = hashlib.sha256('AdminPasswordHere'.encode()).hexdigest()
+    guest_hash = hashlib.sha256('GuestPasswordHere'.encode()).hexdigest()
     
     try:
         conn.execute('INSERT INTO users (username, password_hash, role, tokens) VALUES (?, ?, ?, ?)',
