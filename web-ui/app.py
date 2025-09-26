@@ -91,7 +91,7 @@ def init_db():
         pass
     
     # Create default users if they don't exist. 
-    # Con lon nao tim dc password nay tren github thi dung admin cho nhanh =)) khong thi thoi!!!
+    # Change user and password here if needed
     admin_hash = hashlib.sha256('AdminPasswordHere'.encode()).hexdigest()
     guest_hash = hashlib.sha256('GuestPasswordHere'.encode()).hexdigest()
     
