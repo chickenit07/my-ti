@@ -78,7 +78,7 @@ Default admin/guest credentials and token settings live in `web-ui/app.py`. Upda
 # still inside web-ui and venv
 python app.py
 ```
-Open http://localhost:5000.
+Open http://localhost:8000.
 
 ## Configuration
 
@@ -101,10 +101,6 @@ web-ui/.env
 - Consider explicit mappings/templates for keyword vs analyzed fields
 - Stage converted files for Logstash to tail
 - Snapshot Elasticsearch indices for backups
-
-## Development
-
-Recommended excludes: `esdata/`, `.venv/`, `__pycache__/`, `users.db`, `*.sqlite*`, `.push_tmp/`
 
 ## Roadmap
 
