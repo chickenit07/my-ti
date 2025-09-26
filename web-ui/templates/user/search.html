@@ -42,7 +42,7 @@
             background: var(--background-color) !important;
             color: var(--text-color) !important;
             margin: 0;
-            padding: 10px;
+            padding: 0;
             min-height: 100vh;
             transition: all 0.3s ease;
         }
@@ -770,6 +770,7 @@
 
         /* Consistent space between title and action buttons */
         .header-title { margin-right: 0.75rem; }
+        .site-logo { height: 22px; width: auto; margin-right: 10px; border-radius: 4px; }
 
         .search-header .user-info {
             display: flex;
@@ -872,22 +873,35 @@
         [data-theme="light"] .search-header h3 {
             color: #ffffff !important;
         }
+        /* Ensure token pill and plus icon are visible on light header */
+        [data-theme="light"] .search-header .token-info {
+            color: #ffffff !important;
+            background: rgba(0,0,0,0.2) !important;
+        }
+        [data-theme="light"] .search-header .token-plus {
+            color: #ffffff !important;
+            background: rgba(0,0,0,0.35) !important;
+        }
+        [data-theme="light"] .search-header .token-plus:hover {
+            background: rgba(0,0,0,0.5) !important;
+        }
     </style>
 </head>
 <body data-theme="dark">
-    <div class="container">
+    <div class="container-fluid px-0">
         <!-- Professional Header -->
         <div class="search-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='resources/logo.svg') }}" alt="logo" class="site-logo">
                     <h3 class="header-title"><i class="fas fa-search me-2"></i>Credential Search</h3>
                     {% if user_role == 'guest' %}{% endif %}
                     {% if user_role == 'admin' %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-sm me-2">
+                    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary btn-sm me-2">
                         <i class="fas fa-tools me-2"></i>Admin
                     </a>
                     {% endif %}
-                    <a href="{{ url_for('saved_page') }}" class="btn btn-outline-secondary btn-sm me-2">
+                    <a href="{{ url_for('user.saved_page') }}" class="btn btn-outline-secondary btn-sm me-2">
                         <i class="fas fa-bookmark me-2"></i>My Saved Items
                     </a>
                 </div>
@@ -896,7 +910,7 @@
                     <div class="token-info me-2" title="Earn tokens" id="tokenInfo">
                         <i class="fas fa-coins me-2"></i>
                         <span class="token-count">{{ tokens }} tokens</span>
-                        <a href="{{ url_for('tokens_page') }}" class="token-plus ms-2" title="Earn tokens">
+                        <a href="{{ url_for('user.tokens_page') }}" class="token-plus ms-2" title="Earn tokens">
                             <i class="fas fa-plus"></i>
                         </a>
                     </div>
@@ -904,7 +918,7 @@
                     <div class="user-badge">
                         <i class="fas fa-user me-1"></i>{{ username }} ({{ user_role.title() }})
                     </div>
-                    <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm ms-2">
+                    <a href="{{ url_for('user.logout') }}" class="btn btn-danger btn-sm ms-2">
                         <i class="fas fa-sign-out-alt me-2"></i>Logout
                     </a>
                 </div>
@@ -912,7 +926,7 @@
         </div>
 
         <!-- Search Form -->
-        <form method="POST" action="{{ url_for('search') }}" class="search-form">
+        <form method="POST" action="{{ url_for('user.search') }}" class="search-form">
 
             <div class="row g-3 align-items-end">
                 <div class="col-md-4">
@@ -1095,7 +1109,7 @@
             const formData = new FormData();
             formData.append('security_answer', form.security_answer.value);
             try {
-                const response = await fetch('{{ url_for("add_tokens") }}', { method: 'POST', body: formData });
+                const response = await fetch('{{ url_for("user.add_tokens") }}', { method: 'POST', body: formData });
                 const result = await response.json();
                 if (result.success) {
                     document.querySelector('.token-info').innerHTML = `<i class=\"fas fa-coins me-2\"></i>${result.tokens} tokens`;
@@ -1214,7 +1228,7 @@
                 }
                 const name = prompt('Enter a name for this saved search:');
                 if (!name) { return; }
-                const res = await fetch('{{ url_for("save_results_endpoint") }}', {
+                const res = await fetch('{{ url_for("user.save_results_endpoint") }}', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, items })

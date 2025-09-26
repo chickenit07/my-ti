@@ -70,6 +70,7 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             line-height: 1.2;
         }
+        .site-logo { height: 22px; width: auto; margin-right: 10px; border-radius: 4px; }
         .header-title { margin-right: 0.75rem; }
 
         .admin-header .user-info {
@@ -757,8 +758,9 @@
         <div class="admin-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='resources/logo.svg') }}" alt="logo" class="site-logo">
                     <h3 class="header-title"><i class="fas fa-user me-2"></i>User Dashboard</h3>
-                    <a href="{{ url_for('search') }}" class="btn btn-secondary btn-sm ms-3">
+                    <a href="{{ url_for('user.search') }}" class="btn btn-secondary btn-sm ms-3">
                         <i class="fas fa-arrow-left me-2"></i>Back to Search
                     </a>
                 </div>
@@ -766,7 +768,7 @@
                     <div class="user-badge">
                         <i class="fas fa-user me-1"></i>{{ username }}
                     </div>
-                    <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm ms-2">
+                    <a href="{{ url_for('user.logout') }}" class="btn btn-danger btn-sm ms-2">
                         <i class="fas fa-sign-out-alt me-2"></i>Logout
                     </a>
                 </div>
@@ -820,7 +822,7 @@
                                     <h5 class="card-title m-0">Recent Search Activity</h5>
                                     <p class="text-muted mb-0">Monitor user search patterns and system usage</p>
                                 </div>
-                            <form method="POST" action="{{ url_for('admin_dashboard') }}">
+                            <form method="POST" action="{{ url_for('admin.admin_dashboard') }}">
                                 <input type="hidden" name="action" value="clear_logs">
                                     <button class="btn btn-outline-danger btn-sm" type="submit">
                                         <i class="fas fa-trash me-2"></i>Clear Logs
@@ -881,7 +883,7 @@
                             <div class="card bg-light">
                             <div class="card-body">
                                     <h6 class="text-muted mb-3">Add New User</h6>
-                                    <form method="POST" action="{{ url_for('admin_dashboard') }}">
+                                    <form method="POST" action="{{ url_for('admin.admin_dashboard') }}">
                                         <input type="hidden" name="action" value="add_user">
                                         <div class="row g-2">
                                             <div class="col-md-3">
@@ -944,7 +946,7 @@
                                                 <td class="date-column">{{ u.created_at }}</td>
                                                 <td class="date-column">{{ u.last_login }}</td>
                                                 <td>
-                                            <form method="POST" action="{{ url_for('admin_dashboard') }}" class="d-flex">
+                                            <form method="POST" action="{{ url_for('admin.admin_dashboard') }}" class="d-flex">
                                                 <input type="hidden" name="action" value="reset_password">
                                                         <input type="hidden" name="username" value="{{ u.username }}">
                                                 <input name="password" type="password" class="form-control me-2" placeholder="New password" required>
@@ -952,11 +954,11 @@
                                                     </form>
                                         </td>
                                         <td>
-                                            <form id="userForm{{ u.id }}" method="POST" action="{{ url_for('admin_dashboard') }}" class="d-flex">
+                                            <form id="userForm{{ u.id }}" method="POST" action="{{ url_for('admin.admin_dashboard') }}" class="d-flex">
                                                 <input type="hidden" name="action" value="update_user">
                                                 <input type="hidden" name="user_id" value="{{ u.id }}">
                                                 <button class="btn btn-success me-2" type="submit">Save</button>
-                                                <button class="btn btn-danger" type="submit" formaction="{{ url_for('admin_dashboard') }}" onclick="return confirm('Delete user {{ u.username }}?')" name="action" value="delete_user">Delete</button>
+                                                <button class="btn btn-danger" type="submit" formaction="{{ url_for('admin.admin_dashboard') }}" onclick="return confirm('Delete user {{ u.username }}?')" name="action" value="delete_user">Delete</button>
                                                     </form>
                                                 </td>
                                             </tr>
@@ -979,7 +981,7 @@
                                     <h5 class="card-title m-0">All Saved Items</h5>
                                     <p class="text-muted mb-0">Manage user-saved search results and notes</p>
                                 </div>
-                            <form method="POST" action="{{ url_for('admin_dashboard') }}" onsubmit="return confirm('Clear ALL saved results?');">
+                            <form method="POST" action="{{ url_for('admin.admin_dashboard') }}" onsubmit="return confirm('Clear ALL saved results?');">
                                 <input type="hidden" name="action" value="clear_saved">
                                     <button class="btn btn-outline-danger btn-sm" type="submit">
                                         <i class="fas fa-trash me-2"></i>Clear All
@@ -1007,11 +1009,11 @@
                                         <td class="saved-column">{{ r.item_count }}</td>
                                         <td class="saved-column">{{ r.created_at }}</td>
                                         <td class="saved-column">
-                                            <a href="{{ url_for('saved_detail_page', saved_search_id=r.id) }}" class="btn btn-primary btn-sm me-2">View</a>
-                                            <a href="{{ url_for('saved_detail_page', saved_search_id=r.id) }}" class="btn btn-outline-secondary btn-sm me-2" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+                                            <a href="{{ url_for('user.saved_detail_page', saved_search_id=r.id) }}" class="btn btn-primary btn-sm me-2">View</a>
+                                            <a href="{{ url_for('user.saved_detail_page', saved_search_id=r.id) }}" class="btn btn-outline-secondary btn-sm me-2" target="_blank" rel="noopener noreferrer" title="Open in new tab">
                                                 <i class="fas fa-external-link-alt"></i>
                                             </a>
-                                            <form method="POST" action="{{ url_for('admin_dashboard') }}" onsubmit="return confirm('Delete saved item {{ r.name }}?');" style="display: inline;">
+                                            <form method="POST" action="{{ url_for('admin.admin_dashboard') }}" onsubmit="return confirm('Delete saved item {{ r.name }}?');" style="display: inline;">
                                                 <input type="hidden" name="action" value="delete_saved">
                                                 <input type="hidden" name="id" value="{{ r.id }}">
                                                 <button class="btn btn-danger btn-sm" type="submit">Delete</button>

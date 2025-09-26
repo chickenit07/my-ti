@@ -22,6 +22,9 @@ Old_Archive/
 # Local temp/work dirs
 .push_tmp/
 
+# Environment vars
+.env
+
 # OS/editor noise
 .DS_Store
 Thumbs.db

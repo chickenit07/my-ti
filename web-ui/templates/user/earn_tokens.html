@@ -51,6 +51,8 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--background-color) !important;
             color: var(--text-color) !important;
+            margin: 0;
+            padding: 0;
             transition: all 0.3s ease;
         }
 
@@ -149,7 +151,7 @@
             padding: 0.5rem 1rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 1rem;
+            margin-bottom: 0;
         }
 
         .tokens-header h3 {
@@ -160,9 +162,14 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             line-height: 1.2;
         }
+        .site-logo { height: 22px; width: auto; margin-right: 10px; border-radius: 4px; }
 
         .tokens-header .user-info { display: flex; align-items: center; gap: 0.5rem; }
         .tokens-header .user-badge { background: rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 15px; color: #ffffff; font-weight: 500; backdrop-filter: blur(10px); font-size: 0.9rem; }
+        /* Light theme match admin header */
+        [data-theme="light"] .tokens-header {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
+        }
 
         /* Fixed theme switcher (bottom-right) */
         .theme-switcher {
@@ -234,21 +241,22 @@
     </style>
 </head>
 <body data-theme="dark">
-    <div class="container-fluid py-3">
+    <div class="container-fluid p-0" style="padding-left:0; padding-right:0;">
         <!-- Header -->
         <div class="tokens-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='resources/logo.svg') }}" alt="logo" class="site-logo">
                     <h3><i class="fas fa-coins me-2"></i>Earn Tokens</h3>
-                    <a href="{{ url_for('search') }}" class="btn btn-outline-secondary btn-sm ms-3"><i class="fas fa-arrow-left me-2"></i>Back to Search</a>
+                    <a href="{{ url_for('user.search') }}" class="btn btn-outline-secondary btn-sm ms-3"><i class="fas fa-arrow-left me-2"></i>Back to Search</a>
                 </div>
                 <div class="user-info">
                     <div class="user-badge"><i class="fas fa-user me-1"></i>{{ username }}</div>
-                    <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm ms-2"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                    <a href="{{ url_for('user.logout') }}" class="btn btn-danger btn-sm ms-2"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container-fluid px-0">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="card">
@@ -298,11 +306,11 @@
             const formData = new FormData();
             formData.append('security_answer', form.security_answer.value);
             try {
-                const res = await fetch('{{ url_for("add_tokens") }}', { method: 'POST', body: formData });
+                const res = await fetch('{{ url_for("user.add_tokens") }}', { method: 'POST', body: formData });
                 const result = await res.json();
                 if (result.success) {
                     showToast(result.message, true);
-                    setTimeout(() => { window.location.href = '{{ url_for("search") }}'; }, 1200);
+                    setTimeout(() => { window.location.href = '{{ url_for("user.search") }}'; }, 1200);
                 } else {
                     showToast(result.message, false);
                 }

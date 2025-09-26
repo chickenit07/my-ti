@@ -16,8 +16,9 @@ Repo: https://github.com/chickenit07/my-ti
 - `logstash_pushLog.conf` — Logstash pipeline to ingest JSON into Elasticsearch
 - `docker-compose.yml` — ELK stack (Elasticsearch + Kibana + Logstash)
 - `Old_Archive/` — Archived assets (not used by the current app)
+- `.env.sample` — Example environment file (copy to `.env`)
 
-Note: keep local artifacts out of git (`esdata/`, `.venv/`, `users.db`, `__pycache__/`).
+Note: local artifacts are ignored by git (`esdata/`, `.venv/`, `users.db`, `__pycache__/`, `.env`).
 
 ## Prerequisites
 
@@ -25,18 +26,27 @@ Note: keep local artifacts out of git (`esdata/`, `.venv/`, `users.db`, `__pycac
 - Python 3.10+ (for web-ui and conversion)
 - Git
 
+## Configuration (.env)
+
+Create `.env` from `.env.sample` in the repo root:
+```
+cp .env.sample .env
+```
+Variables:
+- `SECRET_KEY` — Flask secret key
+- `ELASTICSEARCH_URL`, `ES_USERNAME`, `ES_PASSWORD` — ELK connection
+- `ADMIN_PASSWORD`, `GUEST_PASSWORD` — initial credentials seeded into SQLite if users don’t exist
+- `SECURITY_PASSPHRASE` — passphrase required to earn tokens on the UI security question
+
 ## Quick Start
 
 ### 1) Start ELK
-From the repo root:
 ```bash
 docker compose up -d
 # or: docker-compose up -d
 ```
 - Elasticsearch: http://localhost:9200
 - Kibana: http://localhost:5601
-
-Data persists in `esdata/` (ignored by git).
 
 ### 2) Convert raw logs to JSON
 ```bash
@@ -53,47 +63,23 @@ What it does:
 Edit `logstash_pushLog.conf` to point to your JSONL, then:
 ```bash
 docker compose restart logstash
+# or run: logstash -f logstash_pushLog.conf
 ```
-(Or run a local Logstash: `logstash -f logstash_pushLog.conf`.)
 
-### 4) Initialize the Web UI database
-The UI uses SQLite (`users.db`). Run once:
+### 4) Initialize the Web UI DB and run
 ```bash
 cd web-ui
 python -m venv .venv
-# Windows:
-.\.venv\Scripts\activate
-# Linux/macOS:
-# source .venv/bin/activate
-
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
-# Initialize DB with default users (admin/guest) and tables
+# Initialize DB tables and seed admin/guest users using env variables
 python -c "from app import init_db; init_db(); print('DB initialized')"
-```
-Default admin/guest credentials and token settings live in `web-ui/app.py`. Update secrets and passwords before deploying.
 
-### 5) Run the Web UI
-```bash
-# still inside web-ui and venv
+# Run UI
 python app.py
 ```
-Open http://localhost:8000.
-
-## Configuration
-
-- ELK versions/resources: `docker-compose.yml`
-- Logstash inputs/filters/outputs: `logstash_pushLog.conf`
-- UI (roles, tokens, endpoints): `web-ui/app.py` and templates under `web-ui/templates/`
-
-Suggested env file (do not commit):
-```
-web-ui/.env
-  ELASTICSEARCH_URL=http://localhost:9200
-  SECRET_KEY=change-me
-  ES_USERNAME=elastic
-  ES_PASSWORD=your-password
-```
+Open http://localhost:5000.
 
 ## Operational Tips
 
@@ -101,6 +87,10 @@ web-ui/.env
 - Consider explicit mappings/templates for keyword vs analyzed fields
 - Stage converted files for Logstash to tail
 - Snapshot Elasticsearch indices for backups
+
+## Development
+
+Recommended excludes are already in `.gitignore`: `esdata/`, `.venv/`, `__pycache__/`, `users.db`, `*.sqlite*`, `.push_tmp/`, `.env`.
 
 ## Roadmap
 
