@@ -1,0 +1,70 @@
+/* Admin page styling */
+body { 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  background: var(--background-color) !important; 
+  color: var(--text-color) !important; 
+  margin: 0; 
+  padding: 0; 
+  min-height: 100vh; 
+  transition: all 0.3s ease; 
+}
+
+.site-logo { height: 32px; width: auto; margin-right: 10px; border-radius: 4px; }
+.header-title { margin: 0 8px 0 6px; }
+.admin-header { background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%); padding: 0.5rem 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-bottom: 1px solid var(--border-color); position: relative; margin-bottom: 1rem; }
+.admin-header h3 { font-size: 1.4rem; font-weight: 700; margin: 0; color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.1); line-height: 1.2; }
+.admin-header .user-info { display:flex; align-items:center; gap:0.5rem; }
+.admin-header .btn { padding: 0.4rem 0.8rem; font-size: 0.85rem; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; }
+
+/* Table styling */
+.table-responsive { 
+  background-color: var(--card-background) !important; 
+  border: 1px solid var(--border-color) !important; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+  overflow: hidden; 
+}
+
+.table { 
+  margin-bottom:0; 
+  color:var(--text-color); 
+  font-size:0.875rem; 
+}
+
+.table thead th { 
+  background-color:#1e293b; 
+  color:#f8fafc; 
+  border:none; 
+  padding:8px 12px; 
+  font-weight:500; 
+  font-size:0.8rem; 
+}
+
+.table tbody td { 
+  padding:6px 12px; 
+  vertical-align:middle; 
+  border-bottom:1px solid var(--border-color); 
+}
+
+/* Dark theme table styling - force dark backgrounds */
+.table thead th { background-color: #1e293b !important; color: #f8fafc !important; }
+.table tbody td { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
+.table tbody tr { background-color: #1e293b !important; }
+.table-responsive { background-color: #1e293b !important; border-color: #334155 !important; }
+
+/* Force dark theme for table-dark class */
+.table-dark tbody tr { background-color: #1e293b !important; }
+.table-dark tbody td { background-color: #1e293b !important; color: #f8fafc !important; }
+.table-dark thead th { background-color: #1e293b !important; color: #f8fafc !important; }
+
+/* Override Bootstrap's table-dark */
+.table.table-dark tbody tr { background-color: #1e293b !important; }
+.table.table-dark tbody td { background-color: #1e293b !important; color: #f8fafc !important; }
+.table.table-dark thead th { background-color: #1e293b !important; color: #f8fafc !important; }
+
+/* Tab styling for dark theme */
+.nav-tabs { border-bottom: 2px solid var(--border-color); margin-bottom: 1.5rem; }
+.nav-tabs .nav-link { border: none; border-radius: 8px 8px 0 0; margin-right: 0.5rem; font-weight: 500; transition: all 0.3s ease; color: #94a3b8; background: transparent; }
+.nav-tabs .nav-link.active { color: #0ea5e9; background: #0f172a; border-bottom: 3px solid #3498db; }
+.nav-tabs .nav-link:hover { color: #f8fafc; background: #1e293b; }
+

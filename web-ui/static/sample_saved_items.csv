@@ -1,0 +1,11 @@
+domain,username,password,note
+example.com,user1,password123,Sample note 1
+test.org,user2,pass456,Sample note 2
+demo.net,admin,secret789,Admin account
+github.com,developer,devpass2024,Development account
+stackoverflow.com,programmer,code123,Learning platform
+google.com,user@gmail.com,mypassword,Personal account
+facebook.com,john.doe,socialpass,Social media account
+twitter.com,tweeter,tweet123,Twitter account
+linkedin.com,professional,career2024,Professional network
+reddit.com,redditor,redditpass,Discussion platform

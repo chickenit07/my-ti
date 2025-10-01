@@ -1,0 +1,97 @@
+/* Dark theme variables for login */
+:root {
+  --primary-color: #1e293b;
+  --secondary-color: #0ea5e9;
+  --background-color: #0f1419;
+  --card-background: #1e293b;
+  --border-color: #334155;
+  --text-color: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+html, body {
+  background: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.login-card {
+  background: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.login-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
+}
+
+/* Match previous theme contrast for light header */
+/* Force dark header */
+
+.logo-container { margin-bottom: 8px; }
+.logo { height: 40px; width: auto; border-radius: 6px; }
+
+.theme-switcher { display: flex; gap: 6px; }
+.theme-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 6px;
+  color: #ffffff; background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  cursor: pointer; transition: all 0.2s ease;
+}
+.theme-icon.active { background: rgba(255,255,255,0.3); }
+
+.login-body { padding: 18px; }
+
+.form-label { font-weight: 600; color: var(--text-color); }
+.input-group-text { background: #1e293b; color: #f8fafc; border-color: #334155; }
+.form-control { background: #1e293b; color: #f8fafc; border-color: #334155; }
+.form-control:focus { background: #1e293b; color: #f8fafc; border-color: #0ea5e9; box-shadow: 0 0 0 0.2rem rgba(14,165,233,.25); outline: none; }
+.form-control:hover { background: #1e293b; color: #f8fafc; }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #1e293b inset;
+  -webkit-text-fill-color: #f8fafc;
+  caret-color: #f8fafc;
+}
+
+.btn-login {
+  width: 100%; margin-top: 10px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: #ffffff; border: none;
+}
+.btn-login:hover { filter: brightness(1.05); }
+
+/* Fun button & modal */
+.lgbt-theme-btn {
+  position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+  background: linear-gradient(135deg, #ff0080, #ff8c00, #ffd300);
+  color: #fff; border: none;
+}
+
+.lgbt-modal {
+  display: none; position: fixed; inset: 0; z-index: 1100;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);
+}
+.lgbt-modal-content {
+  background: var(--card-background); color: var(--text-color);
+  border: 1px solid var(--border-color);
+  max-width: 520px; margin: 10% auto; padding: 16px; border-radius: 12px;
+}
+.lgbt-modal .close { float: right; cursor: pointer; font-size: 24px; }
+
+

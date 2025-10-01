@@ -39,10 +39,21 @@ def admin_dashboard():
             else:
                 flash('Username and password are required', 'error')
         elif action == 'update_user':
-            username = request.form.get('username', '').strip()
-            role = request.form.get('role')
-            tokens = request.form.get('tokens')
+            # Accept either direct username or resolve from user_id; accept new_role/new_tokens from the form
+            username = (request.form.get('username') or '').strip()
+            user_id = (request.form.get('user_id') or '').strip()
+            role = request.form.get('role') or request.form.get('new_role')
+            tokens = request.form.get('tokens') or request.form.get('new_tokens')
             try:
+                if not username and user_id:
+                    conn = get_db_connection()
+                    row = conn.execute('SELECT username FROM users WHERE id = ?', (user_id,)).fetchone()
+                    conn.close()
+                    if row:
+                        username = row['username']
+                if not username:
+                    raise ValueError('Username not provided')
+
                 if tokens is not None and tokens != '':
                     update_user_tokens(username, int(tokens))
                 if role:
@@ -65,13 +76,21 @@ def admin_dashboard():
             else:
                 flash('Username and password are required', 'error')
         elif action == 'delete_user':
-            username = request.form.get('username', '').strip()
-            if username:
-                try:
-                    delete_user(username)
-                    flash('User deleted', 'success')
-                except Exception as e:
-                    flash(f'Failed to delete user: {e}', 'error')
+            username = (request.form.get('username') or '').strip()
+            user_id = (request.form.get('user_id') or '').strip()
+            try:
+                if not username and user_id:
+                    conn = get_db_connection()
+                    row = conn.execute('SELECT username FROM users WHERE id = ?', (user_id,)).fetchone()
+                    conn.close()
+                    if row:
+                        username = row['username']
+                if not username:
+                    raise ValueError('Username not provided')
+                delete_user(username)
+                flash('User deleted', 'success')
+            except Exception as e:
+                flash(f'Failed to delete user: {e}', 'error')
         elif action == 'clear_logs':
             try:
                 conn = get_db_connection()

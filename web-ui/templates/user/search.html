@@ -6,889 +6,22 @@
     <title>Threat Intelligence Platform</title>
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='resources/logo.svg') }}">
     <script>
-        // Load theme immediately before any CSS
-        (function() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            document.body.setAttribute('data-theme', savedTheme);
-        })();
+        window.APP_URLS = { addTokens: '{{ url_for("user.add_tokens") }}', saveResults: '{{ url_for("user.save_results_endpoint") }}' };
     </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* Light Theme */
-        [data-theme="light"] {
-            --primary-color: #ffffff;
-            --secondary-color: #007bff;
-            --background-color: #f5f7fa;
-            --card-background: #ffffff;
-            --border-color: #e9ecef;
-            --text-color: #212529;
-            --text-muted: #6c757d;
-        }
-
-        /* Dark Theme */
-        [data-theme="dark"] {
-            --primary-color: #1e293b;
-            --secondary-color: #0ea5e9;
-            --background-color: #0f1419;
-            --card-background: #1e293b;
-            --border-color: #334155;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--background-color) !important;
-            color: var(--text-color) !important;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            transition: all 0.3s ease;
-        }
-
-        /* Professional Light theme background */
-        [data-theme="light"] body {
-            background: #f5f7fa !important;
-            color: #212529 !important;
-        }
-
-        /* Professional Dark theme background */
-        [data-theme="dark"] body {
-            background: #0f1419 !important;
-            color: #f8fafc !important;
-        }
-
-        /* Override any white backgrounds */
-        html, body {
-            background-color: var(--background-color) !important;
-        }
-
-        [data-theme="light"] html,
-        [data-theme="light"] body {
-            background-color: #f5f7fa !important;
-        }
-
-        /* Force light theme colors on all elements */
-        [data-theme="light"] .search-form,
-        [data-theme="light"] .results-table,
-        [data-theme="light"] .table,
-        [data-theme="light"] .form-control,
-        [data-theme="light"] .form-select,
-        [data-theme="light"] .container,
-        [data-theme="light"] .search-toolbar,
-        [data-theme="light"] .user-badge,
-        [data-theme="light"] .token-info {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border-color: #e9ecef !important;
-        }
-
-        /* Specific container overrides for light theme */
-        [data-theme="light"] .container {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-        }
-
-        /* Professional gradient user badge for light theme */
-        [data-theme="light"] .user-badge {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
-            color: white !important;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-        }
-
-        /* Fix text-muted colors for better visibility */
-        [data-theme="light"] .text-muted {
-            color: #6c757d !important;
-        }
-
-        [data-theme="dark"] .text-muted {
-            color: #94a3b8 !important;
-        }
-
-        /* Comprehensive light theme overrides */
-        [data-theme="light"] * {
-            color: inherit;
-        }
-
-        [data-theme="light"] .search-form,
-        [data-theme="light"] .results-table,
-        [data-theme="light"] .card,
-        [data-theme="light"] .table-responsive,
-        [data-theme="light"] .form-control,
-        [data-theme="light"] .form-select,
-        [data-theme="light"] .btn,
-        [data-theme="light"] .dropdown-menu,
-        [data-theme="light"] .toast {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border-color: #e9ecef !important;
-        }
-
-        [data-theme="light"] .table thead th,
-        [data-theme="light"] .table tbody td {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border-color: #e9ecef !important;
-        }
-
-        [data-theme="light"] .form-label,
-        [data-theme="light"] .form-text,
-        [data-theme="light"] .text-muted {
-            color: #6c757d !important;
-        }
-
-        [data-theme="light"] .btn-outline-secondary {
-            background-color: #6c757d !important;
-            border-color: #6c757d !important;
-            color: #ffffff !important;
-        }
-
-        [data-theme="light"] .btn-danger {
-            background-color: #dc3545 !important;
-            border-color: #dc3545 !important;
-            color: #ffffff !important;
-        }
-
-        /* Professional gradient buttons for light theme */
-        [data-theme="light"] .btn-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-success {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-danger {
-            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-secondary {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
-        }
-
-        [data-theme="light"] .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
-        }
-
-        [data-theme="light"] .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
-        }
-
-        [data-theme="light"] .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
-        }
-
-        /* Professional gradient outline buttons for light theme */
-        [data-theme="light"] .btn-outline-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-outline-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
-        }
-
-        /* Force light theme on all remaining elements */
-        [data-theme="light"] .navbar,
-        [data-theme="light"] .nav,
-        [data-theme="light"] .dropdown,
-        [data-theme="light"] .modal,
-        [data-theme="light"] .modal-content,
-        [data-theme="light"] .modal-header,
-        [data-theme="light"] .modal-body,
-        [data-theme="light"] .modal-footer {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border-color: #e9ecef !important;
-        }
-
-        [data-theme="light"] .dropdown-item {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-        }
-
-        [data-theme="light"] .dropdown-item:hover {
-            background-color: #f8f9fa !important;
-            color: #212529 !important;
-        }
-
-        [data-theme="light"] .table thead th {
-            background-color: #f8f9fa !important;
-            color: #212529 !important;
-        }
-
-        [data-theme="light"] .table tbody td {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border-color: #e9ecef !important;
-        }
-
-        /* Copy function buttons theme colors */
-        [data-theme="light"] .btn-outline-primary {
-            background-color: #007bff !important;
-            border-color: #007bff !important;
-            color: #ffffff !important;
-        }
-
-        [data-theme="light"] .btn-outline-primary:hover {
-            background-color: #0056b3 !important;
-            border-color: #0056b3 !important;
-        }
-
-        [data-theme="dark"] .btn-outline-primary {
-            background-color: #0ea5e9 !important;
-            border-color: #0ea5e9 !important;
-            color: #ffffff !important;
-        }
-
-        [data-theme="dark"] .btn-outline-primary:hover {
-            background-color: #0284c7 !important;
-            border-color: #0284c7 !important;
-        }
-
-        /* Professional gradient buttons for dark theme */
-        [data-theme="dark"] .btn-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-success {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-danger {
-            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-secondary {
-            background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(75, 85, 99, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-        }
-
-        [data-theme="dark"] .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
-        }
-
-        [data-theme="dark"] .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
-        }
-
-        [data-theme="dark"] .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(75, 85, 99, 0.5);
-        }
-
-        /* Professional gradient outline buttons for dark theme */
-        [data-theme="dark"] .btn-outline-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-outline-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-        }
-
-        [data-theme="dark"] html,
-        [data-theme="dark"] body {
-            background-color: #0f1419 !important;
-        }
-
-        /* Force dark theme colors on all elements */
-        [data-theme="dark"] .search-form,
-        [data-theme="dark"] .results-table,
-        [data-theme="dark"] .table,
-        [data-theme="dark"] .form-control,
-        [data-theme="dark"] .form-select,
-        [data-theme="dark"] .container,
-        [data-theme="dark"] .search-toolbar,
-        [data-theme="dark"] .user-badge,
-        [data-theme="dark"] .token-info {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-            border-color: #334155 !important;
-        }
-
-        /* Specific container overrides for dark theme */
-        [data-theme="dark"] .container {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-        }
-
-        [data-theme="dark"] .table thead th {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-        }
-
-        [data-theme="dark"] .table tbody td {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-            border-color: #334155 !important;
-        }
-
-        .container {
-            width: 100%;
-            max-width: none;
-            margin: 0;
-            padding: 10px;
-            background-color: var(--background-color) !important;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .search-toolbar {
-                flex-direction: column;
-                gap: 10px;
-                align-items: stretch;
-            }
-            
-            .user-info {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            .search-toolbar > div:last-child {
-                display: flex;
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-            
-            .theme-switcher {
-                gap: 2px;
-            }
-            
-            .theme-icon {
-                font-size: 0.9rem;
-                padding: 2px;
-            }
-            
-            .form-label {
-                font-size: 0.9rem;
-            }
-            
-            .btn-sm {
-                font-size: 0.8rem;
-                padding: 0.25rem 0.5rem;
-            }
-        }
-
-        .header-section { display: none; }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-badge {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, #b02a37 100%);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 16px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .theme-switcher {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .theme-icon {
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.2rem;
-            padding: 6px;
-            border-radius: 6px;
-            background: rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .theme-icon:hover {
-            color: #ffffff;
-            background: rgba(0, 0, 0, 0.3);
-            transform: scale(1.05);
-        }
-
-        .theme-icon.active {
-            color: #ffffff;
-            background: var(--secondary-color);
-            border-color: var(--secondary-color);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .theme-icon.active:hover {
-            color: #ffffff;
-            background: var(--secondary-color);
-            transform: scale(1.05);
-        }
-
-        /* Light theme specific styling for better visibility */
-        [data-theme="light"] .theme-icon {
-            color: #495057;
-            background: #ffffff;
-            border: 1px solid #dee2e6;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        [data-theme="light"] .theme-icon:hover {
-            color: #ffffff;
-            background: #6c757d;
-            border-color: #6c757d;
-            transform: scale(1.05);
-        }
-
-        [data-theme="light"] .theme-icon.active {
-            color: #ffffff;
-            background: #007bff;
-            border-color: #007bff;
-            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
-        }
-
-        /* Dark theme specific styling for better visibility */
-        [data-theme="dark"] .theme-icon {
-            color: #f8fafc;
-            background: #374151;
-            border: 1px solid #4b5563;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-
-        [data-theme="dark"] .theme-icon:hover {
-            color: #ffffff;
-            background: #6b7280;
-            border-color: #6b7280;
-            transform: scale(1.05);
-        }
-
-        [data-theme="dark"] .theme-icon.active {
-            color: #ffffff;
-            background: #0ea5e9;
-            border-color: #0ea5e9;
-            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.4);
-        }
-
-        /* Tooltip styling for better visibility */
-        .tooltip {
-            font-size: 0.875rem;
-        }
-
-        .tooltip .tooltip-inner {
-            background-color: #1f2937;
-            color: #ffffff;
-            border: 1px solid #374151;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .tooltip.bs-tooltip-top .tooltip-arrow::before {
-            border-top-color: #1f2937;
-        }
-
-        .tooltip.bs-tooltip-bottom .tooltip-arrow::before {
-            border-bottom-color: #1f2937;
-        }
-
-        .tooltip.bs-tooltip-start .tooltip-arrow::before {
-            border-left-color: #1f2937;
-        }
-
-        .tooltip.bs-tooltip-end .tooltip-arrow::before {
-            border-right-color: #1f2937;
-        }
-
-        .token-info {
-            background: #28a745;
-            color: white;
-            padding: 4px 10px;  
-            border-radius: 16px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .search-form {
-            background-color: var(--card-background) !important;
-            border: 1px solid var(--border-color) !important;
-            padding: 16px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .results-table {
-            background-color: var(--card-background) !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .search-toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .form-label {
-            font-weight: 500;
-            color: var(--text-color);
-        }
-        
-        .form-check-input {
-            width: 1.2em;
-            height: 1.2em;
-            margin-top: 0.1em;
-        }
-
-        .form-control {
-            background-color: var(--card-background);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            border-radius: 5px;
-            padding: 8px 12px;
-        }
-
-        .form-control:focus {
-            background-color: var(--card-background);
-            border-color: var(--secondary-color);
-            color: var(--text-color);
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-        }
-
-        .form-control::placeholder {
-            color: var(--text-muted);
-        }
-
-        .btn-primary {
-            background-color: var(--secondary-color);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover { background-color: #b02a37; transform: translateY(-1px); }
-        .btn-success { background-color: #28a745; border: none; padding: 8px 16px; border-radius: 5px; transition: all 0.3s ease; }
-        .btn-success:hover { background-color: #218838; transform: translateY(-1px); }
-        .btn-danger { background-color: #dc3545; border: none; padding: 6px 10px; border-radius: 5px; }
-
-        .results-table { 
-            background-color: var(--card-background) !important; 
-            border: 1px solid var(--border-color) !important;
-            border-radius: 10px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
-            overflow: hidden; 
-        }
-
-        [data-theme="dark"] .results-table {
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .table { margin-bottom: 0; color: var(--text-color); font-size: 0.875rem; }
-        .table thead th { 
-            background-color: var(--primary-color); 
-            color: white; 
-            border: none; 
-            padding: 8px 12px; 
-            font-weight: 500; 
-            font-size: 0.8rem;
-        }
-        .table tbody td { 
-            padding: 6px 12px; 
-            vertical-align: middle; 
-            border-bottom: 1px solid var(--border-color); 
-        }
-        .table tbody tr:hover { background-color: rgba(220, 53, 69, 0.1); }
-
-        .copyable-box { 
-            border: 1px solid var(--border-color); 
-            border-radius: 5px; 
-            padding: 4px 8px; 
-            transition: all 0.2s ease; 
-            background-color: var(--card-background); 
-            color: var(--text-color);
-        }
-        .copyable-box.highlight { 
-            background-color: rgba(220, 53, 69, 0.2); 
-            border-color: var(--secondary-color); 
-            box-shadow: 0 0 10px rgba(220, 53, 69, 0.3); 
-        }
-        .copy-btn { 
-            background: none; 
-            border: none; 
-            color: var(--secondary-color); 
-            cursor: pointer; 
-            padding: 5px; 
-            transition: all 0.2s ease; 
-            opacity: 0.6; 
-        }
-        .copyable-box:hover .copy-btn { opacity: 1; }
-        .copy-btn:hover { color: #b02a37; transform: scale(1.1); }
-
-        .note-textarea { 
-            width: 100%; 
-            min-width: 100px; 
-            max-width: 100%; 
-            border: 1px solid var(--border-color); 
-            border-radius: 5px; 
-            padding: 8px; 
-            resize: vertical; 
-            box-sizing: border-box; 
-            background-color: var(--card-background);
-            color: var(--text-color);
-        }
-        .note-textarea::placeholder {
-            color: var(--text-muted);
-        }
-
-        .toast { 
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
-            z-index: 1000; 
-        }
-
-        /* Toast styling for light theme */
-        [data-theme="light"] .toast {
-            background-color: #ffffff !important;
-            border: 1px solid #e9ecef !important;
-            color: #212529 !important;
-        }
-
-        [data-theme="light"] .toast-header {
-            background-color: #f8f9fa !important;
-            border-bottom: 1px solid #e9ecef !important;
-            color: #212529 !important;
-        }
-
-        [data-theme="light"] .toast-body {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-        }
-
-        /* Toast styling for dark theme */
-        [data-theme="dark"] .toast {
-            background-color: #1e293b !important;
-            border: 1px solid #334155 !important;
-            color: #f8fafc !important;
-        }
-
-        [data-theme="dark"] .toast-header {
-            background-color: #0f172a !important;
-            border-bottom: 1px solid #334155 !important;
-            color: #f8fafc !important;
-        }
-
-        [data-theme="dark"] .toast-body {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-        }
-
-        [data-theme="dark"] .btn-close {
-            filter: invert(1) grayscale(100%) brightness(200%);
-        }
-        .domain-link { color: var(--secondary-color); text-decoration: none; font-weight: 500; }
-        .domain-link:hover { text-decoration: underline; }
-
-        .security-question-form { display: flex; gap: 10px; align-items: end; }
-        .security-question-form .form-group { flex: 1; margin: 0; }
-        /* Professional header styling */
-        .search-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
-            padding: 0.5rem 1rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 1rem;
-            position: relative;
-        }
-
-        .search-header h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin: 0;
-            color: #ffffff;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            line-height: 1.2;
-        }
-
-        /* Consistent space between title and action buttons */
-        .header-title { margin-right: 0.75rem; }
-        .site-logo { height: 22px; width: auto; margin-right: 10px; border-radius: 4px; }
-
-        .search-header .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .search-header .user-badge {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.4rem 0.8rem;
-            border-radius: 15px;
-            color: #ffffff;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
-            font-size: 0.9rem;
-        }
-
-        /* Standardized button sizing */
-        .search-header .btn {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.85rem;
-            min-height: 36px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .search-header .btn i {
-            font-size: 0.9rem;
-            margin-right: 0.4rem;
-        }
-
-        .search-header .token-info {
-            font-size: 0.9rem;
-            padding: 0.4rem 0.8rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            color: #ffffff;
-            backdrop-filter: blur(10px);
-        }
-
-        .token-plus {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            color: #ffffff;
-            background: rgba(255,255,255,0.15);
-            text-decoration: none;
-        }
-        .token-plus:hover { background: rgba(255,255,255,0.25); }
-
-        /* Theme switcher positioning */
-        .theme-switcher {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 0.5rem;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            display: flex;
-            gap: 0.25rem;
-        }
-
-        .theme-switcher .theme-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .theme-switcher .theme-icon:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-
-        .theme-switcher .theme-icon.active {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* Light theme specific overrides */
-        [data-theme="light"] .search-header {
-            background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
-        }
-
-        [data-theme="light"] .search-header h3 {
-            color: #ffffff !important;
-        }
-        /* Ensure token pill and plus icon are visible on light header */
-        [data-theme="light"] .search-header .token-info {
-            color: #ffffff !important;
-            background: rgba(0,0,0,0.2) !important;
-        }
-        [data-theme="light"] .search-header .token-plus {
-            color: #ffffff !important;
-            background: rgba(0,0,0,0.35) !important;
-        }
-        [data-theme="light"] .search-header .token-plus:hover {
-            background: rgba(0,0,0,0.5) !important;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
 </head>
 <body data-theme="dark">
+    <div id="thinking-overlay" aria-hidden="true">
+        <div class="thinking-box">
+            <div class="thinking-dots" aria-label="Thinking">
+                <span></span><span></span><span></span>
+            </div>
+            <div>AI is thinking…</div>
+        </div>
+    </div>
     <div class="container-fluid px-0">
         <!-- Professional Header -->
         <div class="search-header">
@@ -902,8 +35,8 @@
                         <i class="fas fa-tools me-2"></i>Admin
                     </a>
                     {% endif %}
-                    <a href="{{ url_for('user.saved_page') }}" class="btn btn-outline-secondary btn-sm me-2">
-                        <i class="fas fa-bookmark me-2"></i>My Saved Items
+                    <a href="{{ url_for('user.saved_page') }}" class="btn btn-secondary btn-sm me-2">
+                        <i class="fas fa-bookmark me-2"></i>My Saved Records
                     </a>
                 </div>
                 <div class="user-info">
@@ -929,7 +62,7 @@
         <!-- Search Form -->
         <form method="POST" action="{{ url_for('user.search') }}" class="search-form">
 
-            <div class="row g-3 align-items-end">
+            <div class="row gy-3 gx-3 align-items-end">
                 <div class="col-md-4">
                     <label for="domain" class="form-label">Domain</label>
                     <div class="input-group">
@@ -947,9 +80,16 @@
                 </div>
 
                 <div class="col-md-1">
-                    <label for="line" class="form-label">Results</label>
-                    <input type="number" name="line" id="line" class="form-control" value="{{ request.form.get('line', '50') }}" min="1" max="10000" placeholder="Max 10,000">
+                    <label for="line" class="form-label">Search Limit</label>
+                    {% if user_role == 'admin' %}
+                        <input type="number" name="line" id="line" class="form-control" value="{{ request.form.get('line', '2000') }}" min="1" max="10000" placeholder="Max 10,000">
+                    {% else %}
+                        <input type="number" name="line" id="line" class="form-control" value="{{ request.form.get('line', '50') }}" min="1" max="2000" placeholder="Max 2,000">
+                    {% endif %}
                 </div>
+                
+                <!-- Hidden page field for pagination -->
+                <input type="hidden" name="page" id="page" value="{{ current_page }}">
 
                 <div class="col-md-1">
                     <label for="type" class="form-label">Search Type</label>
@@ -968,7 +108,7 @@
             </div>
         </form>
 
-        <!-- Flash Messages converted to toast notifications -->
+        <!-- Flash Messages converted to toast notifications (unified) -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <script>
@@ -984,19 +124,72 @@
         <!-- Results Table -->
         <div class="results-table">
             <div class="table-responsive">
-                <div class="d-flex justify-content-end gap-2 mb-3">
-                    <button class="btn btn-outline-primary" onclick="copyAllDomains()" type="button">
-                        <i class="fas fa-globe me-2"></i>Copy All Domains
-                    </button>
-                    <button class="btn btn-outline-primary" onclick="copyAllUsernames()" type="button">
-                        <i class="fas fa-users me-2"></i>Copy All Usernames
-                    </button>
-                    <button class="btn btn-outline-primary" onclick="copyAllPasswords()" type="button">
-                        <i class="fas fa-key me-2"></i>Copy All Passwords
-                    </button>
-                    <button class="btn btn-success" onclick="saveSelected()" type="button">
-                        <i class="fas fa-bookmark me-2"></i>Save Item
-                    </button>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    {% if total_results > results_per_page %}
+                    <!-- Top-left pagination controls -->
+                    <nav aria-label="Search results pagination">
+                        <ul class="pagination pagination-sm mb-0">
+                            {% if current_page > 1 %}
+                                <li class="page-item">
+                                    <button type="button" class="page-link" onclick="goToPage(1)" title="First page">
+                                        <i class="fas fa-angle-double-left"></i>
+                                    </button>
+                                </li>
+                                <li class="page-item">
+                                    <button type="button" class="page-link" onclick="goToPage({{ current_page - 1 }})" title="Previous page">
+                                        <i class="fas fa-angle-left"></i>
+                                    </button>
+                                </li>
+                            {% endif %}
+                            
+                            {% set start_page = [current_page - 2, 1] | max %}
+                            {% set end_page = [current_page + 2, total_pages] | min %}
+                            
+                            {% for page_num in range(start_page, end_page + 1) %}
+                                <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                                    <button type="button" class="page-link" onclick="goToPage({{ page_num }})" title="Go to page {{ page_num }}">{{ page_num }}</button>
+                                </li>
+                            {% endfor %}
+                            
+                            {% if current_page < total_pages %}
+                                <li class="page-item">
+                                    <button type="button" class="page-link" onclick="goToPage({{ current_page + 1 }})" title="Next page">
+                                        <i class="fas fa-angle-right"></i>
+                                    </button>
+                                </li>
+                                <li class="page-item">
+                                    <button type="button" class="page-link" onclick="goToPage({{ total_pages }})" title="Last page">
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </button>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% if user_role == 'admin' %}
+                    <form method="post" class="d-flex align-items-center gap-2 ms-2" onsubmit="event.preventDefault(); document.getElementById('page').value = {{ current_page }}; this.submit();">
+                        <label for="results_per_page" class="form-label mb-0 me-2">Results/Page</label>
+                        <input type="number" name="results_per_page" id="results_per_page" class="form-control form-control-sm" value="{{ request.form.get('results_per_page', '100') }}" min="10" max="1000" style="width: 110px;">
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Apply</button>
+                    </form>
+                    {% endif %}
+                    {% else %}
+                    <div></div>
+                    {% endif %}
+                    
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary" onclick="copyAllDomains()" type="button">
+                            <i class="fas fa-globe me-2"></i>Copy All Domains
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="copyAllUsernames()" type="button">
+                            <i class="fas fa-users me-2"></i>Copy All Usernames
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="copyAllPasswords()" type="button">
+                            <i class="fas fa-key me-2"></i>Copy All Passwords
+                        </button>
+                        <button class="btn btn-success" onclick="saveSelected()" type="button">
+                            <i class="fas fa-bookmark me-2"></i>Save Record
+                        </button>
+                    </div>
                 </div>
                 <table class="table">
                     <colgroup>
@@ -1023,7 +216,7 @@
                         {% if hits %}
                             {% for hit in hits %}
                             <tr>
-                                <td>{{ loop.index }}</td>
+                                <td>{{ ((current_page - 1) * results_per_page) + loop.index }}</td>
                                 <td>{{ hit.t }}</td>
                                 <td>
                                     <a href="http://{{ hit.d }}" target="_blank" class="domain-link">
@@ -1047,8 +240,8 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" name="select_checkbox" value="{{ loop.index }}">
+                                    <div class="form-check d-flex justify-content-center align-items-center" style="min-height: 44px;">
+                                        <input type="checkbox" class="form-check-input" name="select_checkbox" value="{{ ((current_page - 1) * results_per_page) + loop.index }}" style="width: 1.25rem; height: 1.25rem;">
                                     </div>
                                 </td>
                                 <td>
@@ -1059,11 +252,11 @@
                         {% else %}
                             <tr>
                                 <td colspan="7" class="text-center py-4">
-                                    <div class="text-muted">
-                                        <i class="fas fa-search fa-2x mb-3"></i>
-                                        <p>Enter search criteria above to view credentials</p>
+                                    <div class="empty-state">
+                                        <i class="fas fa-search mb-2"></i>
+                                        <p class="helper-text mb-0">Enter search criteria above to view credentials</p>
                                         {% if user_role == 'guest' and tokens <= 0 %}
-                                            <p><strong>You need tokens to search. Click Earn Token to get more.</strong></p>
+                                            <p class="helper-text mt-2"><strong>You need tokens to search. Click Earn Token to get more.</strong></p>
                                         {% endif %}
                                     </div>
                                 </td>
@@ -1072,6 +265,57 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Bottom Pagination Controls -->
+            {% if total_results > results_per_page %}
+            <div class="d-flex justify-content-between align-items-center p-3 border-top">
+                <!-- Bottom-left pagination controls -->
+                <nav aria-label="Search results pagination">
+                    <ul class="pagination pagination-sm mb-0">
+                        {% if current_page > 1 %}
+                            <li class="page-item">
+                                <button type="button" class="page-link" onclick="goToPage(1)" title="First page">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </button>
+                            </li>
+                            <li class="page-item">
+                                <button type="button" class="page-link" onclick="goToPage({{ current_page - 1 }})" title="Previous page">
+                                    <i class="fas fa-angle-left"></i>
+                                </button>
+                            </li>
+                        {% endif %}
+                        
+                        {% set start_page = [current_page - 2, 1] | max %}
+                        {% set end_page = [current_page + 2, total_pages] | min %}
+                        
+                        {% for page_num in range(start_page, end_page + 1) %}
+                            <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                                <button type="button" class="page-link" onclick="goToPage({{ page_num }})" title="Go to page {{ page_num }}">{{ page_num }}</button>
+                            </li>
+                        {% endfor %}
+                        
+                        {% if current_page < total_pages %}
+                            <li class="page-item">
+                                <button type="button" class="page-link" onclick="goToPage({{ current_page + 1 }})" title="Next page">
+                                    <i class="fas fa-angle-right"></i>
+                                </button>
+                            </li>
+                            <li class="page-item">
+                                <button type="button" class="page-link" onclick="goToPage({{ total_pages }})" title="Last page">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </button>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                
+                <!-- Bottom-right result info -->
+                <div class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Displaying {{ ((current_page - 1) * results_per_page) + 1 }} to {{ [current_page * results_per_page, total_results] | min }} of {{ "{:,}".format(total_results) }} results
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Saved searches moved to dedicated pages (/saved, /saved/<id>) -->
@@ -1090,7 +334,32 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
     <script>
+        // goToPage function moved to head for early availability
+        
+        // Add event delegation for pagination buttons to ensure clicks work
+        document.addEventListener('DOMContentLoaded', function() {
+            // Use event delegation for pagination buttons
+            document.addEventListener('click', function(e) {
+                // Check if clicked element is a pagination button
+                if (e.target.matches('.pagination .page-link') || e.target.closest('.pagination .page-link')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const button = e.target.matches('.pagination .page-link') ? e.target : e.target.closest('.pagination .page-link');
+                    const pageNumber = parseInt(button.textContent.trim()) || button.getAttribute('data-page');
+                    
+                    if (pageNumber) {
+                        console.log('Event delegation: clicking page', pageNumber);
+                        goToPage(pageNumber);
+                    }
+                }
+            });
+            
+            console.log('Event delegation set up for pagination');
+        });
+        
         // Initialize toast
         const toastEl = document.querySelector('.toast');
         const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
@@ -1236,21 +505,18 @@
                 });
                 const result = await res.json();
                 if (result.success) {
-                    showToastMessage(`Saved ${result.count} item(s) to \"${name}\".`, true);
+                    showToastMessage(`Saved ${result.count} record(s) to \"${name}\".`, true);
                 } else {
                     showToastMessage(result.message || 'Failed to save.', false);
                 }
             } catch (e) {
                 console.error('Failed to save', e);
-                showToastMessage('Error saving items.', false);
+                showToastMessage('Error saving records.', false);
             }
         }
     </script>
 
     <!-- Fixed Theme Switcher -->
-    <div class="theme-switcher">
-        <i class="fas fa-lightbulb theme-icon" data-theme="light" title="Light Theme"></i>
-        <i class="fas fa-moon theme-icon" data-theme="dark" title="Dark Theme"></i>
-    </div>
+    
 </body>
 </html>

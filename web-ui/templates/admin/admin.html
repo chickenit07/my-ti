@@ -6,760 +6,22 @@
     <title>User Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='resources/logo.svg') }}">
     <script>
-        // Load theme immediately before any CSS
-        (function() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            document.body.setAttribute('data-theme', savedTheme);
-        })();
+        window.APP_URLS = { admin: '{{ url_for("admin.admin_dashboard") }}' };
     </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* Light Theme */
-        [data-theme="light"] {
-            --primary-color: #ffffff;
-            --secondary-color: #007bff;
-            --background-color: #f5f7fa;
-            --card-background: #ffffff;
-            --text-color: #212529;
-            --text-muted: #6c757d;
-            --border-color: #dee2e6;
-        }
-
-        /* Dark Theme */
-        [data-theme="dark"] {
-            --primary-color: #1e293b;
-            --secondary-color: #dc3545;
-            --background-color: #0f1419;
-            --card-background: #1e293b;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-        }
-
-        /* Base styling */
-        body { 
-            padding: 0;
-            margin: 0;
-            background-color: var(--background-color) !important;
-            color: var(--text-color) !important;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-        }
-
-        .container-fluid {
-            background-color: var(--background-color) !important;
-            padding: 0;
-            max-width: 100%;
-        }
-
-        /* Professional header styling */
-        .admin-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
-            padding: 0.5rem 1rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-bottom: 1px solid var(--border-color);
-            position: relative;
-        }
-
-        .admin-header h3 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin: 0;
-            color: #ffffff;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            line-height: 1.2;
-        }
-        .site-logo { height: 22px; width: auto; margin-right: 10px; border-radius: 4px; }
-        .header-title { margin-right: 0.75rem; }
-
-        .admin-header .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .admin-header .user-badge {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.4rem 0.8rem;
-            border-radius: 15px;
-            color: #ffffff;
-            font-weight: 500;
-            backdrop-filter: blur(10px);
-            font-size: 0.9rem;
-        }
-
-        /* Standardized button sizing */
-        .admin-header .btn {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.85rem;
-            min-height: 36px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .admin-header .btn i {
-            font-size: 0.9rem;
-            margin-right: 0.4rem;
-        }
-
-        /* Theme switcher positioning */
-        .theme-switcher {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 0.5rem;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            display: flex;
-            gap: 0.25rem;
-        }
-
-        .theme-switcher .theme-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .theme-switcher .theme-icon:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-
-        .theme-switcher .theme-icon.active {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* Main content area */
-        .admin-content {
-            padding: 1rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .card { 
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            background-color: var(--card-background) !important;
-            color: var(--text-color) !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%);
-            color: #ffffff;
-            padding: 0.5rem 0.75rem;
-            border-bottom: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .card-body {
-            padding: 1rem;
-        }
-
-        .table thead th { 
-            background: linear-gradient(135deg, var(--primary-color) 0%, #34495e 100%) !important; 
-            color: #ffffff !important;
-            border-color: var(--border-color) !important;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            padding: 0.75rem 0.5rem;
-        }
-
-        .table tbody td {
-            background-color: var(--card-background) !important;
-            color: var(--text-color) !important;
-            border-color: var(--border-color) !important;
-            padding: 0.5rem;
-            vertical-align: middle;
-            font-size: 0.85rem;
-        }
-
-        .table tbody tr:hover {
-            background-color: rgba(52, 152, 219, 0.05) !important;
-        }
-
-
-
-        /* Tooltip styling for better visibility */
-        .tooltip {
-            font-size: 0.875rem;
-        }
-
-        .tooltip .tooltip-inner {
-            background-color: #1f2937;
-            color: #ffffff;
-            border: 1px solid #374151;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .tooltip.bs-tooltip-top .tooltip-arrow::before {
-            border-top-color: #1f2937;
-        }
-
-        .tooltip.bs-tooltip-bottom .tooltip-arrow::before {
-            border-bottom-color: #1f2937;
-        }
-
-        .tooltip.bs-tooltip-start .tooltip-arrow::before {
-            border-left-color: #1f2937;
-        }
-
-        .tooltip.bs-tooltip-end .tooltip-arrow::before {
-            border-right-color: #1f2937;
-        }
-
-        /* Beautiful gradient buttons for light theme */
-        [data-theme="light"] .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-secondary {
-            background: linear-gradient(135deg, #a8a8a8 0%, #6c757d 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(168, 168, 168, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-primary:hover,
-        [data-theme="light"] .btn-secondary:hover,
-        [data-theme="light"] .btn-danger:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Beautiful gradient buttons for dark theme */
-        [data-theme="dark"] .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-secondary {
-            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(74, 85, 104, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-primary:hover,
-        [data-theme="dark"] .btn-secondary:hover,
-        [data-theme="dark"] .btn-danger:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Toast notification styling */
-        [data-theme="light"] .toast {
-            background-color: #ffffff !important;
-            border: 1px solid #dee2e6 !important;
-        }
-
-        [data-theme="light"] .toast-header {
-            background-color: #f8f9fa !important;
-            color: #212529 !important;
-            border-bottom: 1px solid #dee2e6 !important;
-        }
-
-        [data-theme="light"] .toast-body {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-        }
-
-        [data-theme="light"] .btn-close {
-            filter: none;
-        }
-
-        [data-theme="dark"] .toast {
-            background-color: #1e293b !important;
-            border: 1px solid #334155 !important;
-        }
-
-        [data-theme="dark"] .toast-header {
-            background-color: #374151 !important;
-            color: #f8fafc !important;
-            border-bottom: 1px solid #334155 !important;
-        }
-
-        [data-theme="dark"] .toast-body {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-        }
-
-        [data-theme="dark"] .btn-close {
-            filter: invert(1) grayscale(100%) brightness(200%);
-        }
-
-        /* Tab styling for themes */
-        [data-theme="light"] .nav-tabs {
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        [data-theme="light"] .nav-tabs .nav-link {
-            color: #495057;
-            background-color: transparent;
-            border: 1px solid transparent;
-        }
-
-        [data-theme="light"] .nav-tabs .nav-link:hover {
-            color: #007bff;
-            background-color: #f8f9fa;
-            border-color: #e9ecef #e9ecef #dee2e6;
-        }
-
-        [data-theme="light"] .nav-tabs .nav-link.active {
-            color: #495057;
-            background-color: #ffffff;
-            border-color: #dee2e6 #dee2e6 #ffffff;
-        }
-
-        [data-theme="dark"] .nav-tabs {
-            border-bottom: 1px solid #334155;
-        }
-
-        [data-theme="dark"] .nav-tabs .nav-link {
-            color: #94a3b8;
-            background-color: transparent;
-            border: 1px solid transparent;
-        }
-
-        [data-theme="dark"] .nav-tabs .nav-link:hover {
-            color: #f8fafc;
-            background-color: #374151;
-            border-color: #4b5563 #4b5563 #334155;
-        }
-
-        [data-theme="dark"] .nav-tabs .nav-link.active {
-            color: #f8fafc;
-            background-color: #1e293b;
-            border-color: #334155 #334155 #1e293b;
-        }
-
-        /* Form styling for themes */
-        [data-theme="light"] .form-control,
-        [data-theme="light"] .form-select {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border-color: #ced4da !important;
-        }
-
-        [data-theme="light"] .form-control:focus,
-        [data-theme="light"] .form-select:focus {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border-color: #86b7fe !important;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-        }
-
-        [data-theme="dark"] .form-control,
-        [data-theme="dark"] .form-select {
-            background-color: #374151 !important;
-            color: #f8fafc !important;
-            border-color: #4b5563 !important;
-        }
-
-        [data-theme="dark"] .form-control:focus,
-        [data-theme="dark"] .form-select:focus {
-            background-color: #374151 !important;
-            color: #f8fafc !important;
-            border-color: #0ea5e9 !important;
-            box-shadow: 0 0 0 0.25rem rgba(14, 165, 233, 0.25) !important;
-        }
-
-        /* Card styling for forms */
-        [data-theme="light"] .card {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border: 1px solid #dee2e6 !important;
-        }
-
-        [data-theme="dark"] .card {
-            background-color: #1e293b !important;
-            color: #f8fafc !important;
-            border: 1px solid #334155 !important;
-        }
-
-        /* Button styling for forms */
-        [data-theme="light"] .btn-success {
-            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-warning {
-            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
-            border: none !important;
-            color: #212529 !important;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-success {
-            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
-            border: none !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .btn-warning {
-            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
-            border: none !important;
-            color: #212529 !important;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="light"] .btn-success:hover,
-        [data-theme="light"] .btn-warning:hover,
-        [data-theme="dark"] .btn-success:hover,
-        [data-theme="dark"] .btn-warning:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Professional navigation tabs */
-        .nav-tabs {
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 1.5rem;
-        }
-
-        .nav-tabs .nav-link {
-            border: none;
-            border-radius: 8px 8px 0 0;
-            margin-right: 0.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .nav-tabs .nav-link.active {
-            border-bottom: 3px solid #3498db;
-            font-weight: 600;
-        }
-
-        /* Professional form styling */
-        .form-label {
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        /* Light theme text improvements */
-        [data-theme="light"] .text-muted {
-            color: #6c757d !important;
-        }
-
-        [data-theme="light"] .card-title {
-            color: #212529 !important;
-        }
-
-        [data-theme="light"] .table tbody td {
-            color: #212529 !important;
-        }
-
-        [data-theme="light"] .nav-link {
-            color: #495057 !important;
-        }
-
-        [data-theme="light"] .nav-link.active {
-            color: #0d6efd !important;
-        }
-
-        /* Light theme specific overrides */
-        [data-theme="light"] {
-            --text-color: #212529 !important;
-            --text-muted: #6c757d !important;
-        }
-
-        [data-theme="light"] .admin-header {
-            background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
-        }
-
-        [data-theme="light"] .admin-header h3 {
-            color: #ffffff !important;
-        }
-
-        [data-theme="light"] .card-header {
-            background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
-            color: #ffffff !important;
-        }
-
-        [data-theme="light"] .table thead th {
-            background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
-            color: #ffffff !important;
-        }
-
-        [data-theme="light"] .table tbody td {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-        }
-
-        [data-theme="light"] .table tbody tr:hover {
-            background-color: #f8f9fa !important;
-        }
-
-        /* Statistics cards */
-        .stat-card {
-            background: linear-gradient(135deg, var(--card-background) 0%, #f8f9fa 100%);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #3498db;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Action buttons in tables */
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .action-buttons .btn {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.8rem;
-            border-radius: 6px;
-            min-width: 60px;
-        }
-
-        /* Password column styling */
-        .password-column {
-            min-width: 160px;
-            max-width: 200px;
-            width: 180px;
-        }
-
-        .password-column .form-control {
-            font-size: 0.7rem;
-            padding: 0.15rem 0.3rem;
-            height: 26px;
-            min-height: 26px;
-            color: var(--text-color) !important;
-            width: 100px;
-        }
-
-        [data-theme="dark"] .password-column .form-control {
-            background-color: #374151 !important;
-            color: #ffffff !important;
-            border-color: #4b5563 !important;
-        }
-
-        [data-theme="dark"] .password-column .form-control:focus {
-            background-color: #374151 !important;
-            color: #ffffff !important;
-            border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25) !important;
-        }
-
-        [data-theme="light"] .password-column .form-control {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border-color: #ced4da !important;
-        }
-
-        [data-theme="light"] .password-column .form-control:focus {
-            background-color: #ffffff !important;
-            color: #212529 !important;
-            border-color: #86b7fe !important;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-        }
-
-        [data-theme="dark"] .password-column .form-control::placeholder {
-            color: #9ca3af !important;
-            opacity: 1;
-        }
-
-        [data-theme="light"] .password-column .form-control::placeholder {
-            color: #6c757d !important;
-            opacity: 1;
-        }
-
-        .password-column .btn {
-            font-size: 0.65rem;
-            padding: 0.15rem 0.3rem;
-            min-width: 40px;
-            height: 26px;
-            line-height: 1.2;
-        }
-
-        /* Actions column styling */
-        .actions-column {
-            min-width: 100px;
-            max-width: 120px;
-            width: 110px;
-        }
-
-        .actions-column .form-control,
-        .actions-column .form-select {
-            font-size: 0.7rem;
-            padding: 0.15rem 0.3rem;
-            height: 26px;
-            min-height: 26px;
-        }
-
-        .actions-column .btn {
-            font-size: 0.65rem;
-            padding: 0.15rem 0.3rem;
-            min-width: 45px;
-            height: 26px;
-            line-height: 1.2;
-        }
-
-        .actions-column .d-flex {
-            flex-direction: row;
-            gap: 0.15rem;
-            flex-wrap: nowrap;
-            align-items: center;
-            justify-content: flex-start;
-            white-space: nowrap;
-        }
-
-        .actions-column .d-flex .form-select {
-            margin-bottom: 0;
-            width: 50px;
-            min-width: 50px;
-            max-width: 50px;
-        }
-
-        .actions-column .d-flex .form-control {
-            margin-bottom: 0;
-            width: 35px;
-            min-width: 35px;
-            max-width: 35px;
-        }
-
-        .actions-column .d-flex .btn {
-            margin-bottom: 0;
-            flex-shrink: 0;
-            width: 40px;
-            min-width: 40px;
-            max-width: 40px;
-            padding: 0.15rem 0.25rem;
-        }
-
-        /* Date columns styling */
-        .date-column {
-            min-width: 120px;
-            max-width: 140px;
-            width: 130px;
-            font-size: 0.75rem;
-        }
-
-        /* ID column styling */
-        .id-column {
-            min-width: 30px;
-            max-width: 40px;
-            width: 35px;
-        }
-
-        /* Small columns styling */
-        .small-column {
-            min-width: 80px;
-            max-width: 100px;
-            width: 90px;
-        }
-
-        /* Saved items columns styling */
-        .saved-column {
-            min-width: 100px;
-            max-width: 120px;
-            width: 110px;
-        }
-
-        /* Tokens column styling */
-        .tokens-column {
-            min-width: 50px;
-            max-width: 60px;
-            width: 55px;
-        }
-
-        .tokens-column .form-control {
-            font-size: 0.7rem;
-            padding: 0.15rem 0.3rem;
-            height: auto;
-            min-height: 24px;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     </head>
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid px-0">
         <!-- Professional Header -->
         <div class="admin-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
-                    <img src="{{ url_for('static', filename='resources/logo.svg') }}" alt="logo" class="site-logo">
+                    <a href="{{ url_for('user.search') }}">
+                        <img src="{{ url_for('static', filename='resources/logo.svg') }}" alt="logo" class="site-logo">
+                    </a>
                     <h3 class="header-title"><i class="fas fa-user me-2"></i>User Dashboard</h3>
                     <a href="{{ url_for('user.search') }}" class="btn btn-secondary btn-sm ms-3">
                         <i class="fas fa-arrow-left me-2"></i>Back to Search
@@ -806,7 +68,7 @@
             </li>
             <li class="nav-item" role="presentation">
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#saved" type="button" role="tab">
-                        <i class="fas fa-bookmark me-2"></i>Saved Items
+                        <i class="fas fa-bookmark me-2"></i>Saved Records
                     </button>
             </li>
         </ul>
@@ -947,20 +209,17 @@
                                                 <td class="date-column">{{ u.created_at }}</td>
                                                 <td class="date-column">{{ u.last_login }}</td>
                                                 <td>
-                                            <form method="POST" action="{{ url_for('admin.admin_dashboard') }}" class="d-flex">
-                                                <input type="hidden" name="action" value="reset_password">
-                                                        <input type="hidden" name="username" value="{{ u.username }}">
-                                                <input name="password" type="password" class="form-control me-2" placeholder="New password" required>
-                                                <button class="btn btn-warning btn-sm" type="submit">Reset</button>
-                                                    </form>
-                                        </td>
+                                                    <!-- One unified form handles password update and role/tokens update -->
+                                                    <input name="password" type="password" class="form-control me-2" placeholder="New password" form="userForm{{ u.id }}">
+                                                </td>
                                         <td>
                                             <form id="userForm{{ u.id }}" method="POST" action="{{ url_for('admin.admin_dashboard') }}" class="d-flex">
-                                                <input type="hidden" name="action" value="update_user">
+                                                <input type="hidden" name="action" value="update_user" data-action-field>
                                                 <input type="hidden" name="user_id" value="{{ u.id }}">
+                                                <input type="hidden" name="username" value="{{ u.username }}">
                                                 <button class="btn btn-success me-2" type="submit">Save</button>
                                                 <button class="btn btn-danger" type="submit" formaction="{{ url_for('admin.admin_dashboard') }}" onclick="return confirm('Delete user {{ u.username }}?')" name="action" value="delete_user">Delete</button>
-                                                    </form>
+                                            </form>
                                                 </td>
                                             </tr>
                                             {% endfor %}
@@ -974,13 +233,12 @@
             <div class="tab-pane fade" id="saved" role="tabpanel">
                 <div class="card">
                         <div class="card-header">
-                            <i class="fas fa-bookmark me-2"></i>Saved Items Management
+                            <i class="fas fa-bookmark me-2"></i>Saved Records Management
                         </div>
                     <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div>
-                                    <h5 class="card-title m-0">All Saved Items</h5>
-                                    <p class="text-muted mb-0">Manage user-saved search results and notes</p>
+                                    <h5 class="card-title m-0">All Saved Records</h5>
                                 </div>
                             <form method="POST" action="{{ url_for('admin.admin_dashboard') }}" onsubmit="return confirm('Clear ALL saved results?');">
                                 <input type="hidden" name="action" value="clear_saved">
@@ -996,7 +254,7 @@
                                         <th class="id-column">#</th>
                                         <th class="saved-column">Name</th>
                                         <th class="saved-column">Owner</th>
-                                        <th class="saved-column">Items</th>
+                                        <th class="saved-column">Records</th>
                                         <th class="saved-column">Created</th>
                                         <th class="saved-column">Actions</th>
                                     </tr>
@@ -1007,14 +265,14 @@
                                         <td class="id-column">{{ r.id }}</td>
                                         <td class="saved-column">{{ r.name }}</td>
                                         <td class="saved-column">{{ r.owner_username }}</td>
-                                        <td class="saved-column">{{ r.item_count }}</td>
+                                        <td class="saved-column">{{ r.record_count }}</td>
                                         <td class="saved-column">{{ r.created_at }}</td>
                                         <td class="saved-column">
                                             <a href="{{ url_for('user.saved_detail_page', saved_search_id=r.id) }}" class="btn btn-primary btn-sm me-2">View</a>
                                             <a href="{{ url_for('user.saved_detail_page', saved_search_id=r.id) }}" class="btn btn-outline-secondary btn-sm me-2" target="_blank" rel="noopener noreferrer" title="Open in new tab">
                                                 <i class="fas fa-external-link-alt"></i>
                                             </a>
-                                            <form method="POST" action="{{ url_for('admin.admin_dashboard') }}" onsubmit="return confirm('Delete saved item {{ r.name }}?');" style="display: inline;">
+                                            <form method="POST" action="{{ url_for('admin.admin_dashboard') }}" onsubmit="return confirm('Delete saved record {{ r.name }}?');" style="display: inline;">
                                                 <input type="hidden" name="action" value="delete_saved">
                                                 <input type="hidden" name="id" value="{{ r.id }}">
                                                 <button class="btn btn-danger btn-sm" type="submit">Delete</button>
@@ -1023,7 +281,7 @@
                                     </tr>
                                     {% else %}
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted">No saved items.</td>
+                                        <td colspan="6" class="text-center text-muted">No saved records.</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -1040,13 +298,14 @@
     <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
         <div class="toast-header">
             <i class="fas fa-check-circle me-2 text-success"></i>
-            <strong class="me-auto" id="toast-title">Notice</strong>
+            <strong class="me-auto" id="toast-title">Success</strong>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body" id="toast-body">Copied to clipboard!</div>
+        <div class="toast-body" id="toast-body">Done</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
     <script>
         const toastEl = document.querySelector('.toast');
         const toast = new bootstrap.Toast(toastEl, { delay: 2500 });
@@ -1104,14 +363,23 @@
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
+
+            // Ensure unified Save behavior: if password field empty => treat as role/tokens update only
+            document.querySelectorAll('form[id^="userForm"]').forEach(function(form){
+                form.addEventListener('submit', function(){
+                    const pwd = form.querySelector('input[name="password"]');
+                    const actionField = form.querySelector('input[data-action-field]');
+                    if (pwd && pwd.value.trim() !== '') {
+                        actionField.value = 'reset_password';
+                    } else {
+                        actionField.value = 'update_user';
+                    }
+                });
+            });
         });
     </script>
 
-    <!-- Fixed Theme Switcher -->
-    <div class="theme-switcher">
-        <i class="fas fa-lightbulb theme-icon" data-theme="light" title="Light Theme"></i>
-        <i class="fas fa-moon theme-icon" data-theme="dark" title="Dark Theme"></i>
-    </div>
+    
 </body>
 </html>
 

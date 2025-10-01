@@ -1,0 +1,108 @@
+/* Dark theme variables and base surfaces */
+:root {
+  --primary-color: #1e293b;
+  --secondary-color: #0ea5e9;
+  --background-color: #0f1419;
+  --card-background: #1e293b;
+  --border-color: #334155;
+  --text-color: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+html, body {
+  background: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+/* Generic card/controls */
+.card, .table-responsive, .results-table {
+  background-color: var(--card-background) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.form-control, .form-select, .input-group-text {
+  background-color: var(--card-background) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Form controls */
+.form-control,
+.form-select,
+.input-group-text {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+.form-control::placeholder { color: #94a3b8 !important; }
+
+/* Make read-only/disabled inputs look clearly disabled */
+.form-control[readonly],
+.form-control:disabled,
+.form-select:disabled {
+  background-color: #111827 !important; /* darker */
+  color: #94a3b8 !important;           /* muted text */
+  border-color: #475569 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important; /* keep readable on dark */
+}
+
+/* Helper text visibility on dark backgrounds */
+small.text-muted,
+.form-text,
+label + small {
+  color: #cbd5e1 !important;
+}
+
+/* Primary buttons - lighter gradient for visibility */
+.btn-primary {
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(139, 92, 246, 0.35) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  filter: brightness(1.05);
+  box-shadow: 0 4px 14px rgba(139, 92, 246, 0.45) !important;
+}
+
+/* Toast visibility enhancements */
+.toast,
+.toast .toast-header,
+.toast .toast-body { color: #ffffff !important; }
+
+/* Dark toast base so all pages match */
+.toast { background-color: #2d3748 !important; border: 1px solid #4a5568 !important; }
+.toast .toast-header { background-color: #2d3748 !important; border-bottom: 1px solid #4a5568 !important; }
+.toast .toast-body { background-color: #2d3748 !important; }
+
+.toast.success .toast-header,
+.toast.success .toast-body { background: #166534 !important; }
+
+.toast.error .toast-header,
+.toast.error .toast-body { background: #7f1d1d !important; }
+
+.toast.warning .toast-header,
+.toast.warning .toast-body { background: #854d0e !important; }
+
+/* Visually inactive primary button (used when inputs are empty) */
+.btn-primary.is-inactive {
+  background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 100%) !important; /* darker */
+  box-shadow: none !important;
+  opacity: 0.85;
+}
+
+/* Normalize search form gaps */
+.search-form .row {
+  --bs-gutter-x: 1rem;
+  --bs-gutter-y: 1rem;
+}
+
+/* Global table styling */
+.table thead th { background-color: #1e293b !important; color: #f8fafc !important; }
+.table tbody td { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
+
+

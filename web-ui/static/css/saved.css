@@ -1,0 +1,311 @@
+/* Modern saved page styling */
+body { 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  background: var(--background-color) !important; 
+  color: var(--text-color) !important; 
+  margin: 0; 
+  padding: 0; 
+  min-height: 100vh; 
+  transition: all 0.3s ease; 
+}
+
+.container-fluid { 
+  padding: 0; 
+  background-color: var(--background-color) !important; 
+}
+
+.site-logo { 
+  height: 32px; 
+  width: auto; 
+  margin-right: 10px; 
+  border-radius: 4px; 
+}
+
+.header-title { 
+  margin: 0 8px 0 6px; 
+}
+
+.saved-header { 
+  background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%); 
+  padding: 0.5rem 1rem; 
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+  border-bottom: 1px solid var(--border-color); 
+  margin-bottom: 1rem; 
+  position: relative; 
+}
+
+.saved-header h3 { 
+  font-size: 1.4rem; 
+  font-weight: 700; 
+  margin: 0; 
+  color: #ffffff; 
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1); 
+  line-height: 1.2; 
+}
+
+.saved-header .user-info { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.5rem; 
+}
+
+.saved-header .btn { 
+  padding: 0.4rem 0.8rem; 
+  font-size: 0.85rem; 
+  min-height: 36px; 
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+.saved-header .btn i { 
+  font-size: 0.9rem; 
+  margin-right: 0.4rem; 
+}
+
+/* Match the solid gray button style */
+.btn-outline-secondary,
+.btn-secondary { 
+  background-color: #6c757d !important; 
+  border: 1px solid #6c757d !important; 
+  color: #ffffff !important; 
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-secondary:hover {
+  background-color: #5a6268 !important;
+  border-color: #5a6268 !important;
+  color: #ffffff !important;
+}
+
+/* Dark Modal Styles */
+.dark-modal {
+  background-color: #2d3748 !important;
+  border: 1px solid #4a5568 !important;
+  color: #ffffff !important;
+}
+
+.dark-modal-header {
+  background-color: #2d3748 !important;
+  border-bottom: 1px solid #4a5568 !important;
+  color: #ffffff !important;
+}
+
+.dark-modal-body {
+  background-color: #2d3748 !important;
+  color: #ffffff !important;
+}
+
+.dark-modal-footer {
+  background-color: #2d3748 !important;
+  border-top: 1px solid #4a5568 !important;
+}
+
+.dark-input {
+  background-color: #1a202c !important;
+  border: 1px solid #4a5568 !important;
+  color: #ffffff !important;
+}
+
+.dark-input:focus {
+  background-color: #1a202c !important;
+  border-color: #63b3ed !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 0.2rem rgba(99, 179, 237, 0.25) !important;
+}
+
+.dark-input::placeholder {
+  color: #a0aec0 !important;
+}
+
+.form-label {
+  color: #ffffff !important;
+}
+
+/* Dark Toast/Alert Styling */
+.toast {
+  background-color: #2d3748 !important;
+  border: 1px solid #4a5568 !important;
+  color: #ffffff !important;
+}
+
+.toast-header {
+  background-color: #2d3748 !important;
+  border-bottom: 1px solid #4a5568 !important;
+  color: #ffffff !important;
+}
+
+.toast-body {
+  background-color: #2d3748 !important;
+  color: #ffffff !important;
+}
+
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%) !important;
+}
+
+.user-info { 
+  display: flex; 
+  align-items: center; 
+  gap: 0.5rem; 
+}
+
+.results-table { 
+  background-color: var(--card-background) !important; 
+  border: 1px solid var(--border-color) !important; 
+  border-radius: 10px; 
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+  overflow: hidden; 
+}
+
+.table { 
+  margin-bottom: 0; 
+  color: var(--text-color); 
+  font-size: 0.9rem; 
+}
+
+.table thead th { 
+  background-color: var(--primary-color); 
+  color: #fff; 
+  border: none; 
+  padding: 8px 12px; 
+  font-weight: 500; 
+  font-size: 0.8rem; 
+}
+
+.table tbody td { 
+  padding: 6px 12px; 
+  vertical-align: middle; 
+  border-bottom: 1px solid var(--border-color); 
+}
+
+.name-link { 
+  color: var(--secondary-color); 
+  text-decoration: none; 
+  font-weight: 500; 
+  transition: color 0.2s ease; 
+}
+
+.name-link:hover { 
+  color: #38bdf8; 
+  text-decoration: none; 
+}
+
+/* Form controls styling */
+.form-control,
+.form-select,
+.input-group-text { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
+.form-control::placeholder { color: #94a3b8 !important; }
+
+/* Dark theme table styling - force dark backgrounds */
+.table thead th { background-color: #1e293b !important; color: #f8fafc !important; }
+.table tbody td { background-color: #1e293b !important; color: #f8fafc !important; border-color: #334155 !important; }
+.table tbody tr { background-color: #1e293b !important; }
+.table tbody tr:hover td { background-color: #334155 !important; }
+.results-table .table tbody tr { background-color: #1e293b !important; }
+.results-table .table tbody td { background-color: #1e293b !important; color: #f8fafc !important; }
+
+/* Force dark theme for table-dark class */
+.table-dark tbody tr { background-color: #1e293b !important; }
+.table-dark tbody td { background-color: #1e293b !important; color: #f8fafc !important; }
+.table-dark thead th { background-color: #1e293b !important; color: #f8fafc !important; }
+
+/* Override Bootstrap's table-dark */
+.table.table-dark tbody tr { background-color: #1e293b !important; }
+.table.table-dark tbody td { background-color: #1e293b !important; color: #f8fafc !important; }
+.table.table-dark thead th { background-color: #1e293b !important; color: #f8fafc !important; }
+
+/* Modern action button styling */
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  box-shadow: none;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-outline-primary { 
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%) !important; 
+  border: none !important; 
+  color: #ffffff !important; 
+  box-shadow: 0 2px 10px rgba(139,92,246,0.35) !important; 
+}
+
+.btn-primary { 
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%) !important; 
+  border: none !important; 
+  color: #ffffff !important; 
+  box-shadow: 0 2px 10px rgba(139,92,246,0.35) !important; 
+}
+
+.btn-success { 
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important; 
+  border: none !important; 
+  color: #ffffff !important; 
+  box-shadow: 0 2px 8px rgba(16,185,129,0.3) !important; 
+}
+
+.btn-danger { 
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; 
+  border: none !important; 
+  color: #ffffff !important; 
+  box-shadow: 0 2px 8px rgba(239,68,68,0.25) !important; 
+}
+
+.btn-danger:hover {
+  box-shadow: 0 4px 12px rgba(239,68,68,0.4) !important;
+}
+
+/* Modern toast notification styling */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+  min-width: 300px;
+}
+
+.toast-header {
+  border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 1rem 1.25rem 0.75rem;
+  font-weight: 600;
+}
+
+.toast-body {
+  padding: 0.75rem 1.25rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.toast {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: #f8fafc !important;
+}
+
+.toast-header {
+  background: rgba(255,255,255,0.05) !important;
+  color: #f8fafc !important;
+}
+
+.toast-body {
+  background: transparent !important;
+  color: #e2e8f0 !important;
+}
+
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+

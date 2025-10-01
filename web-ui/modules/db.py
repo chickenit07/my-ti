@@ -159,7 +159,7 @@ def get_search_logs(limit=200):
 def get_saved_searches_for_user(username, limit=500):
     conn = get_db_connection()
     rows = conn.execute('''
-        SELECT s.id, s.name, s.created_at, COUNT(r.id) AS item_count
+        SELECT s.id, s.name, s.created_at, COUNT(r.id) AS record_count
         FROM saved_searches s
         LEFT JOIN saved_results r ON r.saved_search_id = s.id
         WHERE s.owner_username = ?
@@ -173,7 +173,7 @@ def get_saved_searches_for_user(username, limit=500):
 def get_saved_searches_all(limit=1000):
     conn = get_db_connection()
     rows = conn.execute('''
-        SELECT s.id, s.owner_username, s.name, s.created_at, COUNT(r.id) AS item_count
+        SELECT s.id, s.owner_username, s.name, s.created_at, COUNT(r.id) AS record_count
         FROM saved_searches s
         LEFT JOIN saved_results r ON r.saved_search_id = s.id
         GROUP BY s.id
@@ -226,23 +226,23 @@ def create_saved_search(owner_username, name):
     conn.close()
     return saved_id
 
-def save_results(owner_username, items, saved_search_id=None):
+def save_results(owner_username, records, saved_search_id=None):
     conn = get_db_connection()
     try:
         conn.executemany('''
             INSERT INTO saved_results (owner_username, saved_search_id, t, d, u, p, note)
             VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', [(owner_username, saved_search_id, it.get('t'), it['d'], it['u'], it['p'], it.get('note', '')) for it in items])
+        ''', [(owner_username, saved_search_id, rec.get('t'), rec['d'], rec['u'], rec['p'], rec.get('note', '')) for rec in records])
         conn.commit()
     finally:
         conn.close()
 
-def delete_saved_result(owner_username, item_id, is_admin=False):
+def delete_saved_result(owner_username, record_id, is_admin=False):
     conn = get_db_connection()
     if is_admin:
-        conn.execute('DELETE FROM saved_results WHERE id = ?', (item_id,))
+        conn.execute('DELETE FROM saved_results WHERE id = ?', (record_id,))
     else:
-        conn.execute('DELETE FROM saved_results WHERE id = ? AND owner_username = ?', (item_id, owner_username))
+        conn.execute('DELETE FROM saved_results WHERE id = ? AND owner_username = ?', (record_id, owner_username))
     conn.commit()
     conn.close()
 
