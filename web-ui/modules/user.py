@@ -440,6 +440,63 @@ def saved_detail_page(saved_search_id: int):
             except Exception as e:
                 return jsonify({'success': False, 'error': str(e)})
 
+        elif action == 'edit_full' and item_id:
+            domain = request.form.get('domain', '').strip()
+            username = request.form.get('username', '').strip()
+            password = request.form.get('password', '').strip()
+            note = request.form.get('note', '').strip()
+            
+            if not domain or not username or not password:
+                return jsonify({'success': False, 'error': 'Domain, username, and password are required'})
+            
+            try:
+                conn = get_db_connection()
+                owner = conn.execute('SELECT owner_username FROM saved_searches WHERE id = ?', (saved_search_id,)).fetchone()
+                if not owner:
+                    conn.close()
+                    return jsonify({'success': False, 'error': 'Saved search not found'})
+                is_admin = session.get('role') == 'admin'
+                if owner['owner_username'] != session['username'] and not is_admin:
+                    conn.close()
+                    return jsonify({'success': False, 'error': 'Access denied'})
+                
+                # Update all fields
+                conn.execute('''
+                    UPDATE saved_results 
+                    SET d = ?, u = ?, p = ?, note = ?, t = datetime('now')
+                    WHERE id = ? AND saved_search_id = ?
+                ''', (domain, username, password, note, item_id, saved_search_id))
+                conn.commit()
+                conn.close()
+                return jsonify({'success': True})
+            except Exception as e:
+                return jsonify({'success': False, 'error': str(e)})
+
+        elif action == 'rename_search':
+            new_name = request.form.get('new_name', '').strip()
+            
+            if not new_name:
+                return jsonify({'success': False, 'error': 'Name is required'})
+            
+            try:
+                conn = get_db_connection()
+                owner = conn.execute('SELECT owner_username FROM saved_searches WHERE id = ?', (saved_search_id,)).fetchone()
+                if not owner:
+                    conn.close()
+                    return jsonify({'success': False, 'error': 'Saved search not found'})
+                is_admin = session.get('role') == 'admin'
+                if owner['owner_username'] != session['username'] and not is_admin:
+                    conn.close()
+                    return jsonify({'success': False, 'error': 'Access denied'})
+                
+                # Update the saved search name
+                conn.execute('UPDATE saved_searches SET name = ? WHERE id = ?', (new_name, saved_search_id))
+                conn.commit()
+                conn.close()
+                return jsonify({'success': True})
+            except Exception as e:
+                return jsonify({'success': False, 'error': str(e)})
+
         elif action == 'bulk_edit':
             updates_json = request.form.get('updates', '[]')
             import json

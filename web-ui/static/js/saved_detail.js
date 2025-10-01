@@ -62,7 +62,7 @@ function autoSelectCheckbox(textarea) {
 
 function updateSelectionCount() {
   const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
-  const saveBtn = document.querySelector('button[onclick="saveSelectedNotes()"]');
+  const saveBtn = document.querySelector('button[onclick="handleSaveButton()"]');
   const removeBtn = document.querySelector('button[onclick="removeSelectedItems()"]');
   if (selectedCheckboxes.length > 0) {
     if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = `<i class="fas fa-save me-2"></i>Save (${selectedCheckboxes.length})`; }
@@ -194,6 +194,129 @@ function downloadSampleCSV() {
   document.body.removeChild(a);
   window.URL.revokeObjectURL(url);
   showToastMessage('Sample CSV downloaded', true);
+}
+
+function editRecord(id, domain, username, password, note) {
+  // Populate the edit modal with current values
+  document.getElementById('editRecordId').value = id;
+  document.getElementById('editDomain').value = domain;
+  document.getElementById('editUsername').value = username;
+  document.getElementById('editPassword').value = password;
+  document.getElementById('editNote').value = note;
+  
+  // Show the modal
+  const modal = new bootstrap.Modal(document.getElementById('editRecordModal'));
+  modal.show();
+}
+
+function handleSaveButton() {
+  const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+  
+  if (selectedCheckboxes.length === 0) {
+    showToastMessage('Please select a record to edit', false);
+    return;
+  }
+  
+  if (selectedCheckboxes.length === 1) {
+    // Single record selected - open edit modal
+    const itemId = selectedCheckboxes[0].value;
+    const row = selectedCheckboxes[0].closest('tr');
+    
+    // Extract data from the row
+    const domain = row.querySelector('td:nth-child(3) .domain-link').textContent.trim();
+    const username = row.querySelector('td:nth-child(4) .flex-grow-1').textContent.trim();
+    const password = row.querySelector('td:nth-child(5) .flex-grow-1').textContent.trim();
+    const note = row.querySelector('textarea[data-item-id="' + itemId + '"]').value;
+    
+    editRecord(itemId, domain, username, password, note);
+  } else {
+    // Multiple records selected - save notes as before
+    saveSelectedNotes();
+  }
+}
+
+function updateRecord() {
+  const id = document.getElementById('editRecordId').value;
+  const domain = document.getElementById('editDomain').value.trim();
+  const username = document.getElementById('editUsername').value.trim();
+  const password = document.getElementById('editPassword').value.trim();
+  const note = document.getElementById('editNote').value.trim();
+  
+  if (!domain || !username || !password) {
+    showToastMessage('Domain, username, and password are required', false);
+    return;
+  }
+  
+  // Create form data
+  const formData = new FormData();
+  formData.append('action', 'edit_full');
+  formData.append('item_id', id);
+  formData.append('domain', domain);
+  formData.append('username', username);
+  formData.append('password', password);
+  formData.append('note', note);
+  
+  fetch(window.APP_URLS.savedDetail, {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showToastMessage('Record updated successfully!', true);
+      bootstrap.Modal.getInstance(document.getElementById('editRecordModal')).hide();
+      // Reload page to show updated record
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showToastMessage('Failed to update record: ' + data.error, false);
+    }
+  })
+  .catch(error => {
+    showToastMessage('Failed to update record', false);
+  });
+}
+
+function showRenameModal() {
+  // Get current search name
+  const currentName = document.getElementById('searchNameDisplay').textContent;
+  document.getElementById('newSearchName').value = currentName;
+  
+  // Show the modal
+  const modal = new bootstrap.Modal(document.getElementById('renameModal'));
+  modal.show();
+}
+
+function updateSearchName() {
+  const newName = document.getElementById('newSearchName').value.trim();
+  
+  if (!newName) {
+    showToastMessage('Please enter a name', false);
+    return;
+  }
+  
+  // Create form data
+  const formData = new FormData();
+  formData.append('action', 'rename_search');
+  formData.append('new_name', newName);
+  
+  fetch(window.APP_URLS.savedDetail, {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showToastMessage('Saved record renamed successfully!', true);
+      // Update the display name
+      document.getElementById('searchNameDisplay').textContent = newName;
+      bootstrap.Modal.getInstance(document.getElementById('renameModal')).hide();
+    } else {
+      showToastMessage('Failed to rename: ' + data.error, false);
+    }
+  })
+  .catch(error => {
+    showToastMessage('Failed to rename saved record', false);
+  });
 }
 
 window.copyToClipboard = copyToClipboard;
